@@ -45,3 +45,15 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+.vs/SDL Game/v15/.suo
+*.db
+.vs/SDL Game/v15/ipch/AutoPCH/18125f7364c11d8c/MODULEPARTICLES.ipch
+*.ipch
+*.obj
+Debug/SDL Game - Master 3 Handout.Build.CppClean.log
+*.tlog
+Debug/vc141.idb
+*.pdb
+Debug/SDL Game.log
+*.ilk
+Debug/SDL Game - Master 3 Handout.exe
