@@ -9,7 +9,7 @@
 
 
 
-ModuleSceneMapSelection::ModuleSceneMapSelection()
+ModuleSceneMapSelection::ModuleSceneMapSelection(bool active): Module(active)
 {
 }
 

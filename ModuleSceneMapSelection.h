@@ -26,7 +26,7 @@ public:
 	int xRegion, yRegion;
 
 public:
-	ModuleSceneMapSelection();
+	ModuleSceneMapSelection(bool active);
 	~ModuleSceneMapSelection();
 	bool Start();
 	update_status Update();

@@ -28,10 +28,11 @@ Application::Application()
 	// Game Modules
 	modules.push_back(scene_intro = new ModuleSceneIntro(false));
 	modules.push_back(scene_space = new ModuleSceneSpace(false));
+	modules.push_back(road = new ModuleRoad(false));
 	modules.push_back(player = new ModulePlayer(false));
 
 	// Modules to draw on top of game logic
-	modules.push_back(road = new ModuleRoad());
+
 	modules.push_back(collision = new ModuleCollision());
 	modules.push_back(particles = new ModuleParticles());
 	modules.push_back(fade = new ModuleFadeToBlack());
@@ -59,7 +60,8 @@ bool Application::Init()
 	}
 
 	// Start the first scene --
-	fade->FadeToBlack(scene_intro, nullptr, 3.0f);
+	//fade->FadeToBlack(scene_intro, nullptr, 3.0f);
+	fade->FadeToBlack(road, nullptr, 3.0f);
 
 	return ret;
 }
