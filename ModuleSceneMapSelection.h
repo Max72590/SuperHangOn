@@ -23,7 +23,11 @@ public:
 	SDL_Rect* seniorSprite = {};
 	SDL_Rect* expertSprite = {};
 	int mapRegionId = 0;
+	int prevMapRegionId = 0;
 	int xRegion, yRegion;
+	int widthPadding = 40;
+	int heightPadding = 75;
+	Animation *animArray[4]; 
 
 public:
 	ModuleSceneMapSelection(bool active);

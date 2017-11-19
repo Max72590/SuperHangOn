@@ -23,7 +23,7 @@ bool ModuleSceneMapSelection::Start() {
 	background = App->textures->Load("rtype/mapSelectionBackground.png");
 	mapPieces = App->textures->Load("rtype/miscellaneous.png");
 
-	africaSprite.frames.push_back({21,131,272,256}); 
+	africaSprite.frames.push_back({587,4,272,256}); 
 	africaSprite.frames.push_back({ 1100,10,272,256 });
 	africaSprite.speed = 0.5;
 	africaSprite.loop = true;
@@ -60,26 +60,48 @@ bool ModuleSceneMapSelection::Start() {
 	expertSprite->y = 41;
 	expertSprite->w = 143;
 	expertSprite->h = 33;
+	animArray[0] = &africaSprite;
+	animArray[1] = &asiaSprite;
+	animArray[2] = &americaSprite;
+	animArray[3] = &europeSprite;
+	currentAnimation = &africaSprite;
+	xRegion = 243;
+	yRegion = 145;
 	return true;
 }
 
 update_status ModuleSceneMapSelection::Update() {
-	switch (mapRegionId)
-	{
-	case 0:
-		currentAnimation = &africaSprite;
-		break;
-	case 1:
-		currentAnimation = &asiaSprite;
-		break;
-	case 2:
-		currentAnimation = &americaSprite;
-		break;
-	case 3:
-		currentAnimation = &europeSprite;
-		break;
+	App->renderer->Blit(background, 0, 0, &(SDL_Rect({ 0,0,640,480 })));
+	if (prevMapRegionId != mapRegionId) {
+		switch (mapRegionId)
+		{
+		case 0:
+			xRegion = 243;
+			yRegion = 145;
+			currentAnimation = &africaSprite;
+			break;
+		case 1:
+			xRegion = 315;
+			yRegion = 17;
+			currentAnimation = &asiaSprite;
+			break;
+		case 2:
+			xRegion = 19;
+			yRegion = 49;
+			currentAnimation = &americaSprite;
+			break;
+		case 3:
+			xRegion = 235;
+			yRegion = 49;
+			currentAnimation = &europeSprite;
+			break;
+		}
+		
 	}
-	App->renderer->Blit(mapPieces, xRegion, yRegion, &currentAnimation->GetCurrentFrame());
+	for (int i = 0; i < 4; ++i) {
+		if (i != mapRegionId) 	App->renderer->Blit(mapPieces, xRegion + widthPadding, yRegion + heightPadding, &animArray[i]->frames[0]);
+	}
+	App->renderer->Blit(mapPieces, xRegion+widthPadding, yRegion+heightPadding, &currentAnimation->GetCurrentFrame());
 	return UPDATE_CONTINUE;
 }
 
