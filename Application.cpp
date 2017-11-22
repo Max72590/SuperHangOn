@@ -9,6 +9,7 @@
 #include "ModuleParticles.h"
 #include "ModuleRoad.h"
 #include "ModuleSceneMapSelection.h"
+#include "ModuleSceneMusicSelection.h"
 #include "ModuleSceneIntro.h"
 #include "ModuleSceneSpace.h"
 #include "ModulePlayer.h"
@@ -28,6 +29,7 @@ Application::Application()
 	// Game Modules
 	modules.push_back(scene_intro = new ModuleSceneIntro(false));
 	modules.push_back(map_selec = new ModuleSceneMapSelection(false));
+	modules.push_back(music_selec = new ModuleSceneMusicSelection(false));
 	modules.push_back(scene_space = new ModuleSceneSpace(false));
 	modules.push_back(road = new ModuleRoad(false));
 	modules.push_back(player = new ModulePlayer(false));
@@ -61,8 +63,8 @@ bool Application::Init()
 	}
 
 	// Start the first scene --
-	//fade->FadeToBlack(scene_intro, nullptr, 3.0f);
-	fade->FadeToBlack(map_selec, nullptr, 3.0f);
+	fade->FadeToBlack(scene_intro, nullptr, 3.0f);
+	//fade->FadeToBlack(music_selec, nullptr, 3.0f);
 	//fade->FadeToBlack(road, nullptr, 3.0f);
 
 	return ret;

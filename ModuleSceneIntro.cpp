@@ -145,7 +145,7 @@ update_status ModuleSceneIntro::Update()
 	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && App->fade->isFading() == false)
 	{
 		if (firstOptionIsSelected && !newGameSelected)	newGameSelected = true;
-		else App->fade->FadeToBlack((Module*)App->scene_space, this);
+		else App->fade->FadeToBlack((Module*)App->map_selec, this);
 		
 		//App->audio->PlayFx(fx);
 	}

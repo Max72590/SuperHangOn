@@ -87,6 +87,7 @@
     <ClInclude Include="ModuleRoad.h" />
     <ClInclude Include="ModuleSceneIntro.h" />
     <ClInclude Include="ModuleSceneMapSelection.h" />
+    <ClInclude Include="ModuleSceneMusicSelection.h" />
     <ClInclude Include="ModuleSceneSpace.h" />
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="ModuleWindow.h" />
@@ -106,6 +107,7 @@
     <ClCompile Include="ModuleRoad.cpp" />
     <ClCompile Include="ModuleSceneIntro.cpp" />
     <ClCompile Include="ModuleSceneMapSelection.cpp" />
+    <ClCompile Include="ModuleSceneMusicSelection.cpp" />
     <ClCompile Include="ModuleSceneSpace.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />

@@ -19,6 +19,7 @@ class ModuleParticles;
 class ModulePlayer;
 class ModuleSceneIntro;
 class ModuleSceneMapSelection;
+class ModuleSceneMusicSelection;
 class ModuleSceneSpace;
 class ModuleRoad;
 
@@ -46,7 +47,9 @@ public:
 	// Game modules ---
 	ModulePlayer* player;
 	ModuleSceneIntro* scene_intro;
+	ModuleSceneMusicSelection* music_selec;
 	ModuleSceneMapSelection* map_selec;
+	
 	ModuleSceneSpace* scene_space;
 	ModuleRoad* road;
 
