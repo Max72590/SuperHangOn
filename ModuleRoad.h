@@ -15,7 +15,7 @@
 #define GREEN_LIGHT SDL_Color({0,200,0,255})
 
 struct roadPoint {
-	float worldX, worldY, worldZ,  screenScale, screenX, screenY, screenW;
+	float worldX, worldY, worldZ, screenScale, screenX, screenY, screenW, curvefactor;
 };
 
 struct roadSegment {
@@ -34,30 +34,32 @@ public:
 	update_status Update();
 	bool CleanUp();
 	void resetRoad();
-	roadSegment* getRoadSegment(int index);
+
 	void paintRoad();
-	void projection(roadPoint &rp);
-	void drawPolygon(Sint16 x[4], Sint16 y[4], SDL_Color color);
+	void projection(roadPoint &rp, bool looped);
+	void drawTrack(roadPoint const &p1, roadPoint const &p2, bool const isColor1);
 
 public:
 	SDL_Rect sky;
 	SDL_Texture* background = nullptr;
-	std::vector<roadSegment> roadSegments;
+	
+	std::vector<roadPoint> roadPoints;
+
+	
 	//Road
 	float roadWidth = 2000;
 	float segmentLength = 200;
 	float rumbleLength = 3;
 	float segmentsToDraw = 300;
-	float roadLength;
+	int roadLength =0;
 	//Camera projection vars
-	float fieldOfView = 100;
-	float camHeight = 1500;
+	int camHeight = 1500;
 	float camDepth;
 	float drawDistance = 300;
 	float camZPosition =0;
 	float playerX;
 	float offsetX;
-
+	float roadX;
 };
 
 #endif // __MODULEROAD_H__

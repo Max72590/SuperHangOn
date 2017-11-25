@@ -63,9 +63,9 @@ bool Application::Init()
 	}
 
 	// Start the first scene --
-	fade->FadeToBlack(scene_intro, nullptr, 3.0f);
+	//fade->FadeToBlack(scene_intro, nullptr, 3.0f);
 	//fade->FadeToBlack(music_selec, nullptr, 3.0f);
-	//fade->FadeToBlack(road, nullptr, 3.0f);
+	fade->FadeToBlack(road, nullptr, 3.0f);
 
 	return ret;
 }
