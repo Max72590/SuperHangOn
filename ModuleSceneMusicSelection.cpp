@@ -28,7 +28,7 @@ bool ModuleSceneMusicSelection::Start() {
 	pressStartAnim.speed = 0.05;
 	pressStartAnim.loop = true;
 	optionSelectedIndex = 0;
-	App->audio->PlayMusic(musicPaths[optionSelectedIndex].c_str());
+	App->audio->PlayMusic(musicPaths[optionSelectedIndex].c_str(), 0.0f);
 	return true;
 }
 
@@ -39,13 +39,13 @@ update_status ModuleSceneMusicSelection::Update() {
 	{
 		if (optionSelectedIndex <= 0) optionSelectedIndex = 3;
 		else --optionSelectedIndex;
-		App->audio->PlayMusic(musicPaths[optionSelectedIndex].c_str());
+		App->audio->PlayMusic(musicPaths[optionSelectedIndex].c_str(), 0.0f);
 	}
 	if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
 	{
 		if (optionSelectedIndex >= 3) optionSelectedIndex = 0;
 		else ++optionSelectedIndex;
-		App->audio->PlayMusic(musicPaths[optionSelectedIndex].c_str());
+		App->audio->PlayMusic(musicPaths[optionSelectedIndex].c_str(),0.0f);
 	}
 	App->renderer->Blit(musicMenu, 153, 394, &pressStartAnim.GetCurrentFrame());
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && App->fade->isFading() == false)

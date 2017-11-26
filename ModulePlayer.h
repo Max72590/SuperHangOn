@@ -8,6 +8,8 @@
 
 struct SDL_Texture;
 
+enum state {IDLE,LEANING_LEFT,LEANING_RIGHT, REVERSE_LEFT, REVERSE_RIGHT,END_LEFT,END_RIGHT};
+
 class ModulePlayer : public Module
 {
 public:
@@ -25,9 +27,14 @@ public:
 	Animation idle;
 	Animation left;
 	Animation right;
+	Animation endLeft;
+	Animation endRight;
+	Animation reverseLeft;
+	Animation reverseRight;
 	iPoint position;
 	bool destroyed = false;
 	Collider *collider;
+	state playerState;
 };
 
 #endif

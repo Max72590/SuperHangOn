@@ -15,13 +15,10 @@
 #define GREEN_LIGHT SDL_Color({0,200,0,255})
 
 struct roadPoint {
-	float worldX, worldY, worldZ, screenScale, screenX, screenY, screenW, curvefactor;
+	float worldX, worldY, worldZ, screenScale, screenX, screenY, screenW, curvefactor, clipCoord, spriteXCoordOffset;
+	int spriteID;
 };
 
-struct roadSegment {
-	roadPoint point1,point2;
-	SDL_Color color;
-};
 
 class ModuleRoad :
 	public Module
@@ -42,9 +39,10 @@ public:
 public:
 	SDL_Rect sky;
 	SDL_Texture* background = nullptr;
-	
-	std::vector<roadPoint> roadPoints;
+	SDL_Texture* roadAssets = nullptr;
 
+	std::vector<roadPoint> roadPoints;
+	std::vector<SDL_Rect*> sprites;
 	
 	//Road
 	float roadWidth = 2000;

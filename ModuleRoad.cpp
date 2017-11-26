@@ -68,7 +68,7 @@ bool ModuleRoad::Start() {
 
 update_status ModuleRoad::Update() {
 	App->renderer->Blit(background, 0, 0,&sky);
-	camZPosition += 200;
+	//camZPosition += 200;
 	paintRoad();
 	return UPDATE_CONTINUE;
 }
@@ -96,9 +96,9 @@ void ModuleRoad::paintRoad() {
 	for (int i = initPos; i < initPos + drawDistance; ++i) {
 		roadPoint *rpActual = &roadPoints[i%roadLength];
 		projection(*rpActual, (i>= roadLength) );
-		// Add curves
 		roadX += offsetX;
 		offsetX += rpActual->curvefactor;
+		rpActual->clipCoord = ymax;
 		if ( (rpActual->screenY >= ymax) ) continue;
 		ymax = rpActual->screenY;
 		(i == 0 ? ++i : i );
@@ -106,6 +106,17 @@ void ModuleRoad::paintRoad() {
 		drawTrack( (*rpPrevious), (*rpActual), ((i/3)%2 == 0 ));
 		
 	}
+	/*for (int j = initPos + drawDistance; j > initPos; --j) {
+		roadPoint *roadP = &roadPoints[j%roadLength];
+		if (roadP->spriteID != 0) {
+			float spriteScale = roadP->screenScale;
+			float spriteX = roadP->screenX+(roadP->spriteXCoordOffset*roadWidth*spriteScale*(SCREEN_WIDTH / 2));
+			float spriteY = roadP->screenY;
+			float scaledWidth = roadP->screenScale*sprites[roadP->spriteID]->w;
+			float scaledHeight = roadP->screenScale*sprites[roadP->spriteID]->h;
+			App->renderer->Blit(roadAssets,spriteX,spriteY,);
+		}
+	}*/
 }
 
 void ModuleRoad::projection(roadPoint &rp, bool looped) {
