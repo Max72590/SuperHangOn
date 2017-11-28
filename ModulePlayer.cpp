@@ -105,91 +105,50 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update()
 {
+
 	int speed = 1;
 	if (!destroyed){ 
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+		switch (playerState)
 		{
-			if (playerState == END_LEFT) {
-				reverseLeft.Reset();
-				playerState = REVERSE_LEFT;
-				current_animation = &reverseLeft;
-			}
-			 if (playerState == REVERSE_RIGHT && current_animation->Finished()) {
-				current_animation = &idle;
-				playerState = IDLE;
-				reverseLeft.Reset();
-				reverseRight.Reset();
-				left.Reset();
+		case IDLE:
+			if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
 				right.Reset();
-
-			}
-			else if (playerState == IDLE){
 				playerState = LEANING_RIGHT;
-				current_animation = &right;
 			}
-			else if (playerState == LEANING_RIGHT && current_animation->Finished()) {
-				reverseRight.Reset();
-				right.Reset();
-				current_animation = &endRight;
-				playerState = END_RIGHT;
-			}
-		}
-
-		else if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-		{
-			if (playerState == END_RIGHT) {
-				reverseRight.Reset();
-				playerState = REVERSE_RIGHT;
-				current_animation = &reverseRight;
-			}
-			 if (playerState ==  REVERSE_LEFT && current_animation->Finished()) {
-				current_animation = &idle;
-				playerState = IDLE;
-				reverseLeft.Reset();
-				reverseRight.Reset();
+			else if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
 				left.Reset();
-				right.Reset();
-			}
-			else if (playerState == IDLE) {
 				playerState = LEANING_LEFT;
-				current_animation = &left;
 			}
-			else if (playerState == LEANING_LEFT && current_animation->Finished()) {
+			break;
+		case LEANING_LEFT:
+			if (current_animation->Finished()) playerState = END_LEFT;
+			break;
+		case LEANING_RIGHT:
+			if (current_animation->Finished()) playerState = END_RIGHT;
+			break;
+		case REVERSE_LEFT:
+			if (current_animation->Finished()) playerState = IDLE;
+			break;
+		case REVERSE_RIGHT:
+			if (current_animation->Finished()) playerState = IDLE;
+			break;
+		case END_LEFT:
+			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_IDLE	&& App->input->GetKey(SDL_SCANCODE_D) == KEY_IDLE) {
 				reverseLeft.Reset();
-				left.Reset();
-				current_animation = &endLeft;
-				playerState = END_LEFT;
-			}
-		}
-		else if (App->input->GetKey(SDL_SCANCODE_A) == KEY_IDLE
-			&& App->input->GetKey(SDL_SCANCODE_D) == KEY_IDLE) {
-
-			if ((playerState == REVERSE_LEFT || playerState == REVERSE_RIGHT) && current_animation->Finished()) {
-				playerState = IDLE;
-				current_animation = &idle;
-				reverseLeft.Reset();
-				reverseRight.Reset();
-				left.Reset();
-				right.Reset();
-			}		
-			else if (playerState == END_RIGHT || playerState == LEANING_RIGHT) {
-				playerState = REVERSE_RIGHT;
-				reverseRight.Reset();
-				current_animation = &reverseRight;
-			}
-			else if (playerState == END_LEFT || playerState == LEANING_LEFT) {
 				playerState = REVERSE_LEFT;
-				reverseLeft.Reset();
-				current_animation = &reverseLeft;
 			}
-			else if (playerState == IDLE) {
-				current_animation = &idle;
-				reverseLeft.Reset();
+			break;
+		case END_RIGHT:
+			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_IDLE	&& App->input->GetKey(SDL_SCANCODE_D) == KEY_IDLE) {
 				reverseRight.Reset();
-				left.Reset();
-				right.Reset();
+				playerState = REVERSE_RIGHT;
 			}
+			break;
+		default:
+			break;
 		}
+		current_animation = animArray[playerState];
+
 }
 	// Draw everything --------------------------------------
 	if (destroyed == false) {

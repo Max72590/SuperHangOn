@@ -31,6 +31,7 @@ public:
 	Animation endRight;
 	Animation reverseLeft;
 	Animation reverseRight;
+	Animation *animArray[7] = {&idle,&left,&right, &reverseLeft, &reverseRight, &endLeft, &endRight};
 	iPoint position;
 	bool destroyed = false;
 	Collider *collider;

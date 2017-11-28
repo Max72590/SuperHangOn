@@ -18,7 +18,11 @@ bool ModuleRoad::Start() {
 	int hillheight = 0;
 	bool rising = true;
 	int hillCount = 0;
-	for (int i = 0; i < 2000; ++i) {
+	int percent = 0;
+	bool stopHill = false;
+	bool up;
+	int hillCounter = 0;
+	for (float i = 0; i < 5000; ++i) {
 		roadPoint rp = roadPoint();
 		rp.worldX = 0;
 		rp.worldY = 0;
@@ -27,31 +31,20 @@ bool ModuleRoad::Start() {
 		if (i > 300 && i < 500) rp.curvefactor = 2;
 		//else if (i > 500 && i < 700) rp.curvefactor = -2;
 		
-		else if (i > 800 && hillCount == 0) {
-			if (rising) {
-				hillheight = roadPoints[i - 1].worldY + 20;
-				if (hillheight > 2000) {
-					rising = false;
-					rp.worldY = hillheight;
-				}
-				else rp.worldY = hillheight;
-				
+		else if (i > 900 && !stopHill) {
+			if (hillCounter == 3) stopHill = true;
+			float cosinus = cos(i / 30) * 1000;
+			if (cosinus == 0) {
+
+				++hillCounter;
 			}
-			else {
-				rp.worldY = roadPoints[i - 1].worldY - 5;
-				if (rp.worldY  < 0) {
-					rp.worldY = 0;
-					++hillCount;
-				}
-			}
+			rp.worldY = cosinus;
 		}
 		//else if (i > 1000 && i < 1200) rp.curvefactor = 2;
 		else rp.curvefactor = 0;
 		roadPoints.push_back(rp);
 	}
 	roadLength = roadPoints.size() ;
-	
-	//camDepth = 0.84;
 	camDepth = 0.58;
 	sky.x = 0;
 	sky.y = 0;
@@ -68,7 +61,7 @@ bool ModuleRoad::Start() {
 
 update_status ModuleRoad::Update() {
 	App->renderer->Blit(background, 0, 0,&sky);
-	//camZPosition += 200;
+	camZPosition += 200;
 	paintRoad();
 	return UPDATE_CONTINUE;
 }
@@ -93,6 +86,7 @@ void ModuleRoad::paintRoad() {
 	camHeight = (int)(1500 + rp->worldY);
 	offsetX = 0;
 	roadX = 0;
+
 	for (int i = initPos; i < initPos + drawDistance; ++i) {
 		roadPoint *rpActual = &roadPoints[i%roadLength];
 		projection(*rpActual, (i>= roadLength) );
@@ -156,4 +150,18 @@ void ModuleRoad::drawTrack(roadPoint const &p1, roadPoint const &p2, bool const 
 	filledPolygonRGBA(App->renderer->renderer, roadX, y, 4, roadColor.r, roadColor.g, roadColor.b, roadColor.a);
 	filledPolygonRGBA(App->renderer->renderer, rightRumbleX, y, 4, rumbleColor.r, rumbleColor.g, rumbleColor.b, rumbleColor.a);
 	filledPolygonRGBA(App->renderer->renderer, leftRumbleX, y, 4, rumbleColor.r, rumbleColor.g, rumbleColor.b, rumbleColor.a);
+}
+
+float ModuleRoad::easeIn(int start, int end, int percentatge) {
+	return start + (end - start) * pow(percentatge,2);
+}
+
+float ModuleRoad::easeOut(int start, int end, int percentatge) {
+	return start + (end - start) * (1.0 - pow(1.0 - percentatge, 2));
+}
+
+float ModuleRoad::easeInOut(float start, float end, float percentatge) {
+	float cosinus = -cos(((percentatge * M_PI) / 2) + 0.5);
+	float val= start + (end - start) * cosinus;
+	return val;
 }

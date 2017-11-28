@@ -31,10 +31,12 @@ public:
 	update_status Update();
 	bool CleanUp();
 	void resetRoad();
-
 	void paintRoad();
 	void projection(roadPoint &rp, bool looped);
 	void drawTrack(roadPoint const &p1, roadPoint const &p2, bool const isColor1);
+	float easeIn(int start, int end, int percentatge);
+	float easeOut(int start, int end, int percentatge);
+	float easeInOut(float start, float end, float percentatge);
 
 public:
 	SDL_Rect sky;
