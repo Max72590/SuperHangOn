@@ -103,7 +103,7 @@ bool ModulePlayer::CleanUp()
 }
 
 // Update: draw background
-update_status ModulePlayer::Update()
+update_status ModulePlayer::Update(float deltaTime)
 {
 
 	int speed = 1;

@@ -15,8 +15,14 @@
 #define GREEN_LIGHT SDL_Color({0,200,0,255})
 
 struct roadPoint {
-	float worldX, worldY, worldZ, screenScale, screenX, screenY, screenW, curvefactor, clipCoord, spriteXCoordOffset;
+	float worldX, worldY, worldZ, screenScale, screenX, screenY, screenW, curvefactor, clipCoord, spriteXCoord;
 	int spriteID;
+
+	roadPoint() {
+		worldX = worldY = worldZ = screenScale = screenX = screenY = screenW = curvefactor = clipCoord = 0; 
+		spriteXCoord = -1.0f;
+		spriteID = -1;
+	}
 };
 
 
@@ -34,9 +40,8 @@ public:
 	void paintRoad();
 	void projection(roadPoint &rp, bool looped);
 	void drawTrack(roadPoint const &p1, roadPoint const &p2, bool const isColor1);
-	float easeIn(int start, int end, int percentatge);
-	float easeOut(int start, int end, int percentatge);
-	float easeInOut(float start, float end, float percentatge);
+	void drawSprites(int initPos);
+	void smoothInOut(int startPos, float amount);
 
 public:
 	SDL_Rect sky;
@@ -51,6 +56,7 @@ public:
 	float segmentLength = 200;
 	float rumbleLength = 3;
 	float segmentsToDraw = 300;
+	float roadY = 0;
 	int roadLength =0;
 	//Camera projection vars
 	int camHeight = 1500;

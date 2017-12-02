@@ -39,8 +39,8 @@ public:
 	ModuleCollision();
 	~ModuleCollision();
 
-	update_status PreUpdate();
-	update_status Update();
+	update_status PreUpdate(float deltaTime);
+	update_status Update(float deltaTime);
 
 	bool CleanUp();
 

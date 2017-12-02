@@ -112,7 +112,7 @@ bool ModuleSceneIntro::CleanUp()
 }
 
 // Update: draw background
-update_status ModuleSceneIntro::Update()
+update_status ModuleSceneIntro::Update(float deltaTime)
 {
 	App->renderer->Blit(background, 0, 0, NULL);
 

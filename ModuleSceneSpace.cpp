@@ -45,7 +45,7 @@ bool ModuleSceneSpace::CleanUp()
 }
 
 // Update: draw background
-update_status ModuleSceneSpace::Update()
+update_status ModuleSceneSpace::Update(float deltaTime)
 {
 	// Move camera forward -----------------------------
 	int scroll_speed = 1;

@@ -63,28 +63,30 @@ bool Application::Init()
 	}
 
 	// Start the first scene --
-	fade->FadeToBlack(scene_intro, nullptr, 3.0f);
+	//fade->FadeToBlack(scene_intro, nullptr, 3.0f);
 	//fade->FadeToBlack(music_selec, nullptr, 3.0f);
-	//fade->FadeToBlack(road, nullptr, 3.0f);
-
+	fade->FadeToBlack(road, nullptr, 3.0f);
+	gameClock = clock();
 	return ret;
 }
 
 update_status Application::Update()
 {
+	clock_t update = clock();
+	float deltaTime = update - gameClock;
 	update_status ret = UPDATE_CONTINUE;
+	
+	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+		if((*it)->IsEnabled() == true) 
+			ret = (*it)->PreUpdate(deltaTime);
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		if((*it)->IsEnabled() == true) 
-			ret = (*it)->PreUpdate();
+			ret = (*it)->Update(deltaTime);
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		if((*it)->IsEnabled() == true) 
-			ret = (*it)->Update();
-
-	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		if((*it)->IsEnabled() == true) 
-			ret = (*it)->PostUpdate();
+			ret = (*it)->PostUpdate(deltaTime);
 
 	return ret;
 }

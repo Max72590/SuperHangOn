@@ -50,7 +50,7 @@ bool ModuleSceneMapSelection::Start() {
 	return true;
 }
 
-update_status ModuleSceneMapSelection::Update() {
+update_status ModuleSceneMapSelection::Update(float deltaTime) {
 	App->renderer->Blit(background, 0, 0, &(SDL_Rect({ 0,0,640,480 })));
 	if (prevMapRegionId != mapRegionId) {
 		currentAnimation->loop = false;

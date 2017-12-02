@@ -32,7 +32,7 @@ bool ModuleSceneMusicSelection::Start() {
 	return true;
 }
 
-update_status ModuleSceneMusicSelection::Update() {
+update_status ModuleSceneMusicSelection::Update(float deltaTime) {
 	App->renderer->Blit(background, 0, 0, &(SDL_Rect({ 0,0,640,480 })));
 	App->renderer->Blit(musicMenu, 31 , optionsYCoords[optionSelectedIndex], &selectedOptionAnim.GetCurrentFrame());
 	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)

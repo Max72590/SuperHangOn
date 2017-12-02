@@ -3,6 +3,7 @@
 
 #include "MemLeaks.h"
 #include "SDL/include/SDL_rect.h"
+#include <assert.h>
 
 #define LOG(format, ...) log(__FILE__, __LINE__, format, __VA_ARGS__);
 

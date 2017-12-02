@@ -4,6 +4,7 @@
 #include<list>
 #include "Globals.h"
 #include "Module.h"
+#include <time.h>
 
 
 class ModuleRender;
@@ -54,7 +55,7 @@ public:
 	ModuleRoad* road;
 
 private:
-
+	clock_t gameClock;
 	std::list<Module*> modules;
 };
 

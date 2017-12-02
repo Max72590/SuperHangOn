@@ -23,7 +23,7 @@ public:
 	ModuleSceneMusicSelection(bool active);
 	~ModuleSceneMusicSelection();
 	bool Start();
-	update_status Update();
+	update_status Update(float deltaTime);
 	bool CleanUp();
 };
 

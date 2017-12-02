@@ -15,49 +15,71 @@ ModuleRoad::~ModuleRoad()
 }
 
 bool ModuleRoad::Start() {
+
 	int hillheight = 0;
 	bool rising = true;
 	int hillCount = 0;
 	int percent = 0;
-	bool stopHill = false;
 	bool up;
 	int hillCounter = 0;
 	for (float i = 0; i < 5000; ++i) {
-		roadPoint rp = roadPoint();
-		rp.worldX = 0;
-		rp.worldY = 0;
+		roadPoint rp;
 		rp.worldZ = i*segmentLength;
-
+		// Curves
 		if (i > 300 && i < 500) rp.curvefactor = 2;
-		//else if (i > 500 && i < 700) rp.curvefactor = -2;
-		
-		else if (i > 900 && !stopHill) {
-			if (hillCounter == 3) stopHill = true;
-			float cosinus = cos(i / 30) * 1000;
-			if (cosinus == 0) {
-
-				++hillCounter;
+		else if (i > 2000 && i < 2200) rp.curvefactor = -2;
+		else if (i > 2400 && i < 2600) rp.curvefactor = 3;
+		// Hills
+		if (i > 0) {
+			float cosinus = 0;
+			/*if (i >= 450 && i <= 720) {
+				cosinus = cos(i/30)*1000;
+				//float diff = abs(roadPoints[i - 1].worldY - cosinus);
+				//if (diff > 0.3) smoothInOut(i,diff);
+				rp.worldY = cosinus;
 			}
-			rp.worldY = cosinus;
+			else rp.worldY = roadPoints[i - 1].worldY;*/
 		}
-		//else if (i > 1000 && i < 1200) rp.curvefactor = 2;
-		else rp.curvefactor = 0;
+		else rp.worldY = 0;
 		roadPoints.push_back(rp);
+
 	}
-	roadLength = roadPoints.size() ;
-	camDepth = 0.58;
+	roadLength = roadPoints.size();
+	camDepth = 0.84; // Horizon looks better with this value
+	//camDepth = 0.58 
 	sky.x = 0;
 	sky.y = 0;
 	sky.w = 640;
 	sky.h = 480;
 	background = App->textures->Load("rtype/blueBackground.png");
+	roadAssets = App->textures->Load("rtype/sprites.png");
+	SDL_Rect *tree = new SDL_Rect();
+	tree->x = 1204;
+	tree->y = 4;
+	tree->w = 283;
+	tree->h = 296;
+	sprites.push_back(tree);
 	App->player->Enable();
 	playerX = 0;
 	camZPosition = 0;
 	roadLength = roadPoints.size();
-
+	for (int j = 300; j < 500; ++j) {
+		if ((j % 20) == 0 ) {
+			roadPoints[j].spriteID = 0;
+			roadPoints[j].spriteXCoord = -2.0;
+		}
+	}
 	return true;
 }
+
+void ModuleRoad::smoothInOut(int position, float amount) {
+	int step = (int) ceil(amount / 0.2);
+	for (int i = position - step; i < position; ++i) {
+		if (roadPoints[i].worldY > 0) roadPoints[i].worldY -= 0.2;
+		else  roadPoints[i].worldY += 0.2;
+	}
+}
+
 
 update_status ModuleRoad::Update() {
 	App->renderer->Blit(background, 0, 0,&sky);
@@ -92,25 +114,14 @@ void ModuleRoad::paintRoad() {
 		projection(*rpActual, (i>= roadLength) );
 		roadX += offsetX;
 		offsetX += rpActual->curvefactor;
-		rpActual->clipCoord = ymax;
+		rpActual->clipCoord = (float) ymax;
 		if ( (rpActual->screenY >= ymax) ) continue;
 		ymax = rpActual->screenY;
 		(i == 0 ? ++i : i );
 		roadPoint *rpPrevious = &roadPoints[(i - 1)%roadLength];
-		drawTrack( (*rpPrevious), (*rpActual), ((i/3)%2 == 0 ));
-		
+		drawTrack( (*rpPrevious), (*rpActual), ((i/3)%2 == 0 ));		
 	}
-	/*for (int j = initPos + drawDistance; j > initPos; --j) {
-		roadPoint *roadP = &roadPoints[j%roadLength];
-		if (roadP->spriteID != 0) {
-			float spriteScale = roadP->screenScale;
-			float spriteX = roadP->screenX+(roadP->spriteXCoordOffset*roadWidth*spriteScale*(SCREEN_WIDTH / 2));
-			float spriteY = roadP->screenY;
-			float scaledWidth = roadP->screenScale*sprites[roadP->spriteID]->w;
-			float scaledHeight = roadP->screenScale*sprites[roadP->spriteID]->h;
-			App->renderer->Blit(roadAssets,spriteX,spriteY,);
-		}
-	}*/
+	drawSprites(initPos);
 }
 
 void ModuleRoad::projection(roadPoint &rp, bool looped) {
@@ -119,7 +130,7 @@ void ModuleRoad::projection(roadPoint &rp, bool looped) {
 	float camZ = rp.worldZ - (camZPosition - (looped ? roadLength*segmentLength : 0));
 	rp.screenScale = camDepth / camZ;
 	rp.screenX = ( (1 + (rp.screenScale * camX) ) * (SCREEN_WIDTH / 2)) ;
-	rp.screenY = ( (1 - (rp.screenScale * camY) ) * (SCREEN_HEIGHT/2)); //(SCREEN_HEIGHT / 2) ) );
+	rp.screenY = ( (1 - (rp.screenScale * camY) ) * (SCREEN_HEIGHT/1.8)); //(SCREEN_HEIGHT / 2) ) );
 	rp.screenW = (rp.screenScale*roadWidth * (SCREEN_WIDTH / 2) );
 }
 
@@ -152,16 +163,22 @@ void ModuleRoad::drawTrack(roadPoint const &p1, roadPoint const &p2, bool const 
 	filledPolygonRGBA(App->renderer->renderer, leftRumbleX, y, 4, rumbleColor.r, rumbleColor.g, rumbleColor.b, rumbleColor.a);
 }
 
-float ModuleRoad::easeIn(int start, int end, int percentatge) {
-	return start + (end - start) * pow(percentatge,2);
-}
-
-float ModuleRoad::easeOut(int start, int end, int percentatge) {
-	return start + (end - start) * (1.0 - pow(1.0 - percentatge, 2));
-}
-
-float ModuleRoad::easeInOut(float start, float end, float percentatge) {
-	float cosinus = -cos(((percentatge * M_PI) / 2) + 0.5);
-	float val= start + (end - start) * cosinus;
-	return val;
+void ModuleRoad::drawSprites(int initPos) {
+	assert(initPos >= 0);
+	for (int j = initPos + drawDistance; j > initPos; --j) {
+		roadPoint *roadP = &roadPoints[j%roadLength];
+		if (roadP->spriteID != -1) {
+			SDL_Rect sprite = *sprites[roadP->spriteID];
+			float spriteX = roadP->screenX + roadP->screenScale * roadP->spriteXCoord * (SCREEN_WIDTH / 2);
+			float spriteY = roadP->screenY + 4;
+			float spriteW = sprite.w * (roadP->screenW/ 266);
+			float spriteH = sprite.h * (roadP->screenW / 266);
+			spriteX += spriteW * roadP->spriteXCoord;
+			spriteY += spriteH * (-1);
+			float clipH = spriteY + spriteH - roadP->clipCoord;
+			if (clipH < 0) clipH = 0;
+			if (clipH >= spriteH) return;
+			App->renderer->ScaledBlit(roadAssets,(int)spriteX- spriteW/2, (int)spriteY, &sprite ,spriteW, spriteH);
+		}
+	}
 }
