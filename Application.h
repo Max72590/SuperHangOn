@@ -23,6 +23,7 @@ class ModuleSceneMapSelection;
 class ModuleSceneMusicSelection;
 class ModuleSceneSpace;
 class ModuleRoad;
+class ModuleEnemy;
 
 class Application
 {
@@ -50,12 +51,13 @@ public:
 	ModuleSceneIntro* scene_intro;
 	ModuleSceneMusicSelection* music_selec;
 	ModuleSceneMapSelection* map_selec;
-	
+	ModuleEnemy* enemies;
 	ModuleSceneSpace* scene_space;
 	ModuleRoad* road;
 
 private:
 	clock_t gameClock;
+	float deltaTime;
 	std::list<Module*> modules;
 };
 

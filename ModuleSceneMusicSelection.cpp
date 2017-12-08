@@ -21,11 +21,11 @@ bool ModuleSceneMusicSelection::Start() {
 	musicMenu = App->textures->Load("rtype/musicMenu.png");
 	selectedOptionAnim.frames.push_back({0,335,565,50});
 	selectedOptionAnim.frames.push_back({0,335,5,5}); // Small size to be out of sight
-	selectedOptionAnim.speed = 0.05;
+	selectedOptionAnim.speed = 0.05f;
 	selectedOptionAnim.loop = true;
 	pressStartAnim.frames.push_back({ 0,335,565,50 });
 	pressStartAnim.frames.push_back({ 0,335,5,5 }); // Small size to be out of sight
-	pressStartAnim.speed = 0.05;
+	pressStartAnim.speed = 0.05f;
 	pressStartAnim.loop = true;
 	optionSelectedIndex = 0;
 	App->audio->PlayMusic(musicPaths[optionSelectedIndex].c_str(), 0.0f);

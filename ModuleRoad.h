@@ -6,6 +6,7 @@
 #include "SDL\include\SDL2_gfxPrimitives.h"
 #include <vector>
 #include <math.h>
+#include "ModuleEnemy.h"
 
 #define WHITE SDL_Color({255,255,255,255})
 #define RED SDL_Color({255,0,0,255})
@@ -34,7 +35,7 @@ public:
 	~ModuleRoad();
 
 	bool Start();
-	update_status Update();
+	update_status Update(float deltaTime);
 	bool CleanUp();
 	void resetRoad();
 	void paintRoad();
@@ -42,15 +43,16 @@ public:
 	void drawTrack(roadPoint const &p1, roadPoint const &p2, bool const isColor1);
 	void drawSprites(int initPos);
 	void smoothInOut(int startPos, float amount);
+	float calculatePosZ(float speed);
 
 public:
 	SDL_Rect sky;
 	SDL_Texture* background = nullptr;
 	SDL_Texture* roadAssets = nullptr;
-
 	std::vector<roadPoint> roadPoints;
 	std::vector<SDL_Rect*> sprites;
-	
+	std::vector<Enemy> enemies;	// in order, the first is the farthest.
+
 	//Road
 	float roadWidth = 2000;
 	float segmentLength = 200;
@@ -63,9 +65,8 @@ public:
 	float camDepth;
 	float drawDistance = 300;
 	float camZPosition =0;
-	float playerX;
-	float offsetX;
-	float roadX;
+	float offsetX = 0;
+	float roadX = 0;
 };
 
 #endif // __MODULEROAD_H__

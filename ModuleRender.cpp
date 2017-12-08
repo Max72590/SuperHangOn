@@ -39,7 +39,7 @@ bool ModuleRender::Init()
 	return ret;
 }
 
-update_status ModuleRender::PreUpdate()
+update_status ModuleRender::PreUpdate(float deltaTime)
 {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
@@ -47,7 +47,7 @@ update_status ModuleRender::PreUpdate()
 }
 
 // Called every draw update
-update_status ModuleRender::Update()
+update_status ModuleRender::Update(float deltaTime)
 {
 	// debug camera
 	int speed = 1;
@@ -67,7 +67,7 @@ update_status ModuleRender::Update()
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleRender::PostUpdate()
+update_status ModuleRender::PostUpdate(float deltaTime)
 {
 	SDL_RenderPresent(renderer);
 	return UPDATE_CONTINUE;

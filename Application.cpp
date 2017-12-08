@@ -7,6 +7,7 @@
 #include "ModuleFadeToBlack.h"
 #include "ModuleCollision.h"
 #include "ModuleParticles.h"
+#include "ModuleEnemy.h"
 #include "ModuleRoad.h"
 #include "ModuleSceneMapSelection.h"
 #include "ModuleSceneMusicSelection.h"
@@ -32,10 +33,10 @@ Application::Application()
 	modules.push_back(music_selec = new ModuleSceneMusicSelection(false));
 	modules.push_back(scene_space = new ModuleSceneSpace(false));
 	modules.push_back(road = new ModuleRoad(false));
+	modules.push_back(enemies = new ModuleEnemy(false));
 	modules.push_back(player = new ModulePlayer(false));
 
 	// Modules to draw on top of game logic
-
 	modules.push_back(collision = new ModuleCollision());
 	modules.push_back(particles = new ModuleParticles());
 	modules.push_back(fade = new ModuleFadeToBlack());
@@ -65,6 +66,7 @@ bool Application::Init()
 	// Start the first scene --
 	//fade->FadeToBlack(scene_intro, nullptr, 3.0f);
 	//fade->FadeToBlack(music_selec, nullptr, 3.0f);
+	
 	fade->FadeToBlack(road, nullptr, 3.0f);
 	gameClock = clock();
 	return ret;
@@ -73,32 +75,32 @@ bool Application::Init()
 update_status Application::Update()
 {
 	clock_t update = clock();
-	float deltaTime = update - gameClock;
+	deltaTime += (float)(update - gameClock) / CLOCKS_PER_SEC;
 	update_status ret = UPDATE_CONTINUE;
-	
-	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		if((*it)->IsEnabled() == true) 
-			ret = (*it)->PreUpdate(deltaTime);
+	if (deltaTime > STEP ) {
+		gameClock = update;
+		for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+			if ((*it)->IsEnabled() == true)
+				ret = (*it)->PreUpdate(deltaTime);
 
-	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		if((*it)->IsEnabled() == true) 
-			ret = (*it)->Update(deltaTime);
+		for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+			if ((*it)->IsEnabled() == true)
+				ret = (*it)->Update(deltaTime);
 
-	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		if((*it)->IsEnabled() == true) 
-			ret = (*it)->PostUpdate(deltaTime);
-
+		for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+			if ((*it)->IsEnabled() == true)
+				ret = (*it)->PostUpdate(deltaTime);
+		deltaTime = 0;
+	}
 	return ret;
 }
 
 bool Application::CleanUp()
 {
 	bool ret = true;
-
 	for(list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
 		if((*it)->IsEnabled() == true) 
 			ret = (*it)->CleanUp();
-
 	return ret;
 }
 

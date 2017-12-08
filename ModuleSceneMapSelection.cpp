@@ -24,24 +24,24 @@ bool ModuleSceneMapSelection::Start() {
 	mapPieces = App->textures->Load("rtype/miscellaneous.png");
 	pressStartTitle.frames.push_back({ 5,27,273,17 });
 	pressStartTitle.frames.push_back({ 0,1250,273,17 });
-	pressStartTitle.speed = 0.05;
+	pressStartTitle.speed = 0.05f;
 	pressStartTitle.loop = true;
 
 	africaSprite.frames.push_back({587,4,103,112}); 
 	africaSprite.frames.push_back({ 0,1250,103,112 });
-	africaSprite.speed = 0.1;
+	africaSprite.speed = 0.1f;
 	africaSprite.loop = true;
 	europeSprite.frames.push_back({ 697,7,113,97 });
 	europeSprite.frames.push_back({ 0,1250,113,97 });
-	europeSprite.speed = 0.1;
+	europeSprite.speed = 0.1f;
 	europeSprite.loop = false;
 	americaSprite.frames.push_back({ 566,122,193,257 });
 	americaSprite.frames.push_back({ 0,1250,193,257 });
-	americaSprite.speed = 0.1;
+	americaSprite.speed = 0.1f;
 	americaSprite.loop = false;
 	asiaSprite.frames.push_back({ 787,107,233,272 });
 	asiaSprite.frames.push_back({ 0,1250,233,272 });
-	asiaSprite.speed = 0.1;
+	asiaSprite.speed = 0.1f;
 	asiaSprite.loop = false;
 
 	currentAnimation = &africaSprite;

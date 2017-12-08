@@ -50,5 +50,8 @@ typedef unsigned int uint;
 #define FULLSCREEN false
 #define VSYNC true
 #define TITLE "Super Awesome Game"
+#define FPS 60
+#define STEP 1/FPS
+
 
 #endif //__GLOBALS_H__

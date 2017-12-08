@@ -36,7 +36,14 @@ public:
 	bool destroyed = false;
 	Collider *collider;
 	state playerState;
-	float speed, maxspeed, accel,breaking,decel,offRoadDecel,offRoadLimit;
+	float speed;
+	float maxspeed = 240.0;	// get this set on *road*
+	float accel = maxspeed/5;
+	float breaking = -maxspeed;
+	float decel = -maxspeed/5;
+	float offRoadDecel = -maxspeed/2;
+	float offRoadLimit = maxspeed/4;
+	float playerX;
 };
 
 #endif

@@ -3,6 +3,8 @@
 #include "Application.h"
 #include "ModuleTextures.h"
 #include "ModuleRender.h"
+#include "ModulePlayer.h"
+
 using namespace std;
 
 ModuleRoad::ModuleRoad(bool active): Module(active)
@@ -15,7 +17,6 @@ ModuleRoad::~ModuleRoad()
 }
 
 bool ModuleRoad::Start() {
-
 	int hillheight = 0;
 	bool rising = true;
 	int hillCount = 0;
@@ -45,7 +46,7 @@ bool ModuleRoad::Start() {
 
 	}
 	roadLength = roadPoints.size();
-	camDepth = 0.84; // Horizon looks better with this value
+	camDepth = 0.84f; // Horizon looks better with this value
 	//camDepth = 0.58 
 	sky.x = 0;
 	sky.y = 0;
@@ -60,29 +61,30 @@ bool ModuleRoad::Start() {
 	tree->h = 296;
 	sprites.push_back(tree);
 	App->player->Enable();
-	playerX = 0;
 	camZPosition = 0;
 	roadLength = roadPoints.size();
 	for (int j = 300; j < 500; ++j) {
 		if ((j % 20) == 0 ) {
 			roadPoints[j].spriteID = 0;
-			roadPoints[j].spriteXCoord = -2.0;
+			roadPoints[j].spriteXCoord = -2.0f;
 		}
 	}
+	App->enemies->addEnemy(*(App->enemies->greenEnemy), roadWidth/2, 0);
 	return true;
 }
 
 void ModuleRoad::smoothInOut(int position, float amount) {
-	int step = (int) ceil(amount / 0.2);
+	int step = (int) ceil(amount / 0.2f);
 	for (int i = position - step; i < position; ++i) {
-		if (roadPoints[i].worldY > 0) roadPoints[i].worldY -= 0.2;
-		else  roadPoints[i].worldY += 0.2;
+		if (roadPoints[i].worldY > 0) roadPoints[i].worldY -= 0.2f;
+		else  roadPoints[i].worldY += 0.2f;
 	}
 }
 
 
-update_status ModuleRoad::Update() {
+update_status ModuleRoad::Update(float deltaTime) {
 	App->renderer->Blit(background, 0, 0,&sky);
+	//camZPosition = calculatePosZ(App->player->speed);
 	camZPosition += 200;
 	paintRoad();
 	return UPDATE_CONTINUE;
@@ -102,13 +104,12 @@ void ModuleRoad::resetRoad() {
 void ModuleRoad::paintRoad() {
 	while (camZPosition >= roadLength*200) camZPosition -= roadLength*segmentLength;
 	while (camZPosition < 0) camZPosition += roadLength*segmentLength;
-	int ymax = SCREEN_HEIGHT;
+	float ymax = SCREEN_HEIGHT;
 	int initPos = (int)(camZPosition / segmentLength);
 	roadPoint* rp = &roadPoints[initPos];
 	camHeight = (int)(1500 + rp->worldY);
 	offsetX = 0;
 	roadX = 0;
-
 	for (int i = initPos; i < initPos + drawDistance; ++i) {
 		roadPoint *rpActual = &roadPoints[i%roadLength];
 		projection(*rpActual, (i>= roadLength) );
@@ -125,7 +126,7 @@ void ModuleRoad::paintRoad() {
 }
 
 void ModuleRoad::projection(roadPoint &rp, bool looped) {
-	float camX = rp.worldX - (int)(playerX - roadX);
+	float camX = rp.worldX - (int)(App->player->playerX - roadX);
 	float camY = rp.worldY - camHeight;
 	float camZ = rp.worldZ - (camZPosition - (looped ? roadLength*segmentLength : 0));
 	rp.screenScale = camDepth / camZ;
@@ -143,8 +144,8 @@ void ModuleRoad::drawTrack(roadPoint const &p1, roadPoint const &p2, bool const 
 	Sint16 y2 = p2.screenY;
 	Sint16 roadX[4] = {p1x-p1w, p2x-p2w, p2x+p2w, p1x + p1w };
 	Sint16 greenX[4] = { 0, 0,SCREEN_WIDTH,SCREEN_WIDTH };
-	Sint16 leftRumbleX[4] = {p1x-p1w,p2x-p2w,p2x - p2w -p2w*0.05,p1x-p1w -p1w*0.05 };
-	Sint16 rightRumbleX[4] = {p1x+p1w,p2x+p2w,p2x+p2w+p2w*0.05,p1x+p1w+p1w*0.05 };
+	Sint16 leftRumbleX[4] = {p1x-p1w,p2x-p2w,p2x - p2w -p2w*0.05f,p1x-p1w -p1w*0.05f };
+	Sint16 rightRumbleX[4] = {p1x+p1w,p2x+p2w,p2x+p2w+p2w*0.05f,p1x+p1w+p1w*0.05f };
 	Sint16 y[4] = { y1,y2,y2,y1 };
 	SDL_Color roadColor, offRoadColor, rumbleColor;
 	if (isColor1) {
@@ -165,8 +166,9 @@ void ModuleRoad::drawTrack(roadPoint const &p1, roadPoint const &p2, bool const 
 
 void ModuleRoad::drawSprites(int initPos) {
 	assert(initPos >= 0);
+	// Scenery
 	for (int j = initPos + drawDistance; j > initPos; --j) {
-		roadPoint *roadP = &roadPoints[j%roadLength];
+		roadPoint *roadP = &roadPoints[j % roadLength];
 		if (roadP->spriteID != -1) {
 			SDL_Rect sprite = *sprites[roadP->spriteID];
 			float spriteX = roadP->screenX + roadP->screenScale * roadP->spriteXCoord * (SCREEN_WIDTH / 2);
@@ -177,8 +179,34 @@ void ModuleRoad::drawSprites(int initPos) {
 			spriteY += spriteH * (-1);
 			float clipH = spriteY + spriteH - roadP->clipCoord;
 			if (clipH < 0) clipH = 0;
-			if (clipH >= spriteH) return;
+			if (clipH >= spriteH) break;
 			App->renderer->ScaledBlit(roadAssets,(int)spriteX- spriteW/2, (int)spriteY, &sprite ,spriteW, spriteH);
 		}
 	}
+	// Enemies
+	for (int k = 0; k < App->enemies->enemies.size(); ++k) {
+		Enemy *e = App->enemies->enemies[k];
+		if (e->enemyPosZ > initPos && e->enemyPosZ < initPos+drawDistance ) {
+			roadPoint *roadP = &roadPoints[((int) e->getPosZ()) % roadLength];
+			SDL_Rect *sprite = App->enemies->enemies[k]->getActualAnimRect();
+			float spriteX = roadP->screenX + roadP->screenScale * roadP->spriteXCoord * (SCREEN_WIDTH / 2);
+			float spriteY = roadP->screenY + 4;
+			float spriteW = sprite->w * (roadP->screenW / 266);
+			float spriteH = sprite->h * (roadP->screenW / 266);
+			spriteX += spriteW * roadP->spriteXCoord;
+			spriteY += spriteH * (-1);
+			float clipH = spriteY + spriteH - roadP->clipCoord;
+			if (clipH < 0) clipH = 0;
+			if (clipH >= spriteH) return;
+			e->setMoveAnim(roadP->curvefactor);
+			App->enemies->drawEnemy(spriteX, spriteY, spriteW, spriteH, e);
+		}
+	}
+}
+
+float ModuleRoad::calculatePosZ(float speed) {
+	if (speed > 200) {
+		camZPosition += 200;
+	}
+	return camZPosition;
 }
