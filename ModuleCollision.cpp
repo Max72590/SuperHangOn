@@ -41,7 +41,7 @@ update_status ModuleCollision::PreUpdate(float deltaTime)
 update_status ModuleCollision::Update(float deltaTime)
 {
 	// TODO 8: Check collisions between all colliders. 
-	// After making it work, review that you are doing the minumum checks possible
+	// After making it work, review that you are doing the minimum checks possible
 	list<Collider*>::iterator it, it2;
 	for (it = colliders.begin(); it != colliders.end(); ++it) {
 		for (it2 = it; it2 != colliders.end(); ++it2) {

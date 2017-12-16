@@ -32,14 +32,12 @@ bool ModuleRoad::Start() {
 		else if (i > 2400 && i < 2600) rp.curvefactor = 3;
 		// Hills
 		if (i > 0) {
-			float cosinus = 0;
-			/*if (i >= 450 && i <= 720) {
-				cosinus = cos(i/30)*1000;
-				//float diff = abs(roadPoints[i - 1].worldY - cosinus);
-				//if (diff > 0.3) smoothInOut(i,diff);
-				rp.worldY = cosinus;
+			if (i >= 720 && i <= 970) {
+				if (i == 721) smoothInOut(719, 720, abs( cosinus(720) - cosinus(719)));
+				rp.worldY = cosinus(i);
 			}
-			else rp.worldY = roadPoints[i - 1].worldY;*/
+
+			else rp.worldY = roadPoints[i - 1].worldY;
 		}
 		else rp.worldY = 0;
 		roadPoints.push_back(rp);
@@ -63,29 +61,43 @@ bool ModuleRoad::Start() {
 	App->player->Enable();
 	camZPosition = 0;
 	roadLength = roadPoints.size();
-	for (int j = 300; j < 500; ++j) {
+	for (int j = 50; j < 300; ++j) {
+		if ((j % 20) == 0) {
+			roadPoints[j].spriteID = 0;
+			roadPoints[j].spriteXCoord = -2.0f+roadPoints[j].curvefactor;
+		}
+	}
+	for (int j =720; j < 970; ++j) {
 		if ((j % 20) == 0 ) {
 			roadPoints[j].spriteID = 0;
-			roadPoints[j].spriteXCoord = -2.0f;
+			roadPoints[j].spriteXCoord = -2.0f + roadPoints[j].curvefactor;
 		}
 	}
 	App->enemies->addEnemy(*(App->enemies->greenEnemy), roadWidth/2, 0);
 	return true;
 }
 
-void ModuleRoad::smoothInOut(int position, float amount) {
-	int step = (int) ceil(amount / 0.2f);
-	for (int i = position - step; i < position; ++i) {
-		if (roadPoints[i].worldY > 0) roadPoints[i].worldY -= 0.2f;
-		else  roadPoints[i].worldY += 0.2f;
+void ModuleRoad::smoothInOut(int previouspPos, int actualPos, float amount) {
+	float actualHeight = roadPoints[actualPos].worldY;
+	float previousHeight = roadPoints[previouspPos].worldY;
+	float acumulator = previousHeight+ amount;
+	int steps = (int) ceil( (actualHeight - previousHeight) / amount);
+	for (int i = actualPos-steps; i < actualPos; ++i) {
+		roadPoints[i].worldY = acumulator;
+		if (actualHeight > previousHeight) acumulator += amount;
+		else  acumulator -= amount;
 	}
+	int a = 1;
 }
 
+float ModuleRoad::cosinus(float rads) {
+	return cos(rads / 30) * 1000;
+}
 
 update_status ModuleRoad::Update(float deltaTime) {
 	App->renderer->Blit(background, 0, 0,&sky);
 	//camZPosition = calculatePosZ(App->player->speed);
-	camZPosition += 200;
+	//camZPosition += 200;
 	paintRoad();
 	return UPDATE_CONTINUE;
 }
@@ -120,7 +132,7 @@ void ModuleRoad::paintRoad() {
 		ymax = rpActual->screenY;
 		(i == 0 ? ++i : i );
 		roadPoint *rpPrevious = &roadPoints[(i - 1)%roadLength];
-		drawTrack( (*rpPrevious), (*rpActual), ((i/3)%2 == 0 ));		
+		drawTrack( (rpPrevious), (rpActual), ((i/3)%2 == 0 ));		
 	}
 	drawSprites(initPos);
 }
@@ -135,13 +147,15 @@ void ModuleRoad::projection(roadPoint &rp, bool looped) {
 	rp.screenW = (rp.screenScale*roadWidth * (SCREEN_WIDTH / 2) );
 }
 
-void ModuleRoad::drawTrack(roadPoint const &p1, roadPoint const &p2, bool const isColor1) {
-	Sint16 p1x = p1.screenX;
-	Sint16 p1w = p1.screenW;
-	Sint16 p2x = p2.screenX;
-	Sint16 p2w = p2.screenW;					
-	Sint16 y1 = p1.screenY;
-	Sint16 y2 = p2.screenY;
+void ModuleRoad::drawTrack(roadPoint const *p1, roadPoint const *p2, bool const isColor1) {
+	assert(p1 != nullptr);
+	assert(p2 != nullptr);
+	Sint16 p1x = p1->screenX;
+	Sint16 p1w = p1->screenW;
+	Sint16 p2x = p2->screenX;
+	Sint16 p2w = p2->screenW;
+	Sint16 y1 = p1->screenY;
+	Sint16 y2 = p2->screenY;
 	Sint16 roadX[4] = {p1x-p1w, p2x-p2w, p2x+p2w, p1x + p1w };
 	Sint16 greenX[4] = { 0, 0,SCREEN_WIDTH,SCREEN_WIDTH };
 	Sint16 leftRumbleX[4] = {p1x-p1w,p2x-p2w,p2x - p2w -p2w*0.05f,p1x-p1w -p1w*0.05f };
@@ -172,14 +186,15 @@ void ModuleRoad::drawSprites(int initPos) {
 		if (roadP->spriteID != -1) {
 			SDL_Rect sprite = *sprites[roadP->spriteID];
 			float spriteX = roadP->screenX + roadP->screenScale * roadP->spriteXCoord * (SCREEN_WIDTH / 2);
-			float spriteY = roadP->screenY + 4;
-			float spriteW = sprite.w * (roadP->screenW/ 266);
-			float spriteH = sprite.h * (roadP->screenW / 266);
+			float spriteY = roadP->screenY;
+			float spriteW = sprite.w * (roadP->screenW / segmentLength);
+			float spriteH = sprite.h * (roadP->screenW / segmentLength);
 			spriteX += spriteW * roadP->spriteXCoord;
 			spriteY += spriteH * (-1);
 			float clipH = spriteY + spriteH - roadP->clipCoord;
 			if (clipH < 0) clipH = 0;
-			if (clipH >= spriteH) break;
+			if (clipH >= spriteH) continue;
+			sprite.h = (int) (sprite.h - (sprite.h * clipH / spriteH));
 			App->renderer->ScaledBlit(roadAssets,(int)spriteX- spriteW/2, (int)spriteY, &sprite ,spriteW, spriteH);
 		}
 	}

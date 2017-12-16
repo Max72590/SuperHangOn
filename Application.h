@@ -24,6 +24,8 @@ class ModuleSceneMusicSelection;
 class ModuleSceneSpace;
 class ModuleRoad;
 class ModuleEnemy;
+class ModuleGUI;
+class ModuleFonts;
 
 class Application
 {
@@ -54,6 +56,8 @@ public:
 	ModuleEnemy* enemies;
 	ModuleSceneSpace* scene_space;
 	ModuleRoad* road;
+	ModuleFonts* fonts;
+	ModuleGUI* gui;
 
 private:
 	clock_t gameClock;

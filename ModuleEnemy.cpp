@@ -3,7 +3,7 @@
 #include "ModuleRender.h"
 
 
-ModuleEnemy::ModuleEnemy(bool active)
+ModuleEnemy::ModuleEnemy(bool active) : Module(active)
 {
 
 }
@@ -45,9 +45,6 @@ void ModuleEnemy::drawEnemy(float x, float y, float scaleW, float scaleH, Enemy 
 
 	int middleX = e->enemyPosX - (e->current_animation->GetCurrentFrame().w / 2);
 	int middleY = 480 - (e->current_animation->GetCurrentFrame().h * 2);
-	//App->renderer->Blit(sprites, middleX, middleY, &(e->current_animation->GetCurrentFrame()));
-
-	//App->renderer->Blit(sprites, middleX, middleY, &(current_animation->GetCurrentFrame()));
 	App->renderer->ScaledBlit(sprites, x, y, &(e->current_animation->GetCurrentFrame()), scaleW, scaleH);
 	//e->collider->SetPos(x, y);
 }
@@ -142,7 +139,7 @@ void Enemy::Update(float deltaTime) {
 	current_animation = animArray[enemyAnimState];
 	//if (enemyPosZ > 250) enemyPosZ += 2;
 	//else	enemyPosZ += 1;
-	enemyPosZ += 1;
+	//enemyPosZ += 1;
 }
 
 SDL_Rect* Enemy::getActualAnimRect() {

@@ -9,6 +9,8 @@
 #include "ModuleParticles.h"
 #include "ModuleEnemy.h"
 #include "ModuleRoad.h"
+#include "ModuleFonts.h"
+#include "ModuleGUI.h"
 #include "ModuleSceneMapSelection.h"
 #include "ModuleSceneMusicSelection.h"
 #include "ModuleSceneIntro.h"
@@ -32,9 +34,11 @@ Application::Application()
 	modules.push_back(map_selec = new ModuleSceneMapSelection(false));
 	modules.push_back(music_selec = new ModuleSceneMusicSelection(false));
 	modules.push_back(scene_space = new ModuleSceneSpace(false));
+	modules.push_back(enemies = new ModuleEnemy(true));
 	modules.push_back(road = new ModuleRoad(false));
-	modules.push_back(enemies = new ModuleEnemy(false));
 	modules.push_back(player = new ModulePlayer(false));
+	modules.push_back(fonts = new ModuleFonts(true));
+	modules.push_back(gui = new ModuleGUI(true));
 
 	// Modules to draw on top of game logic
 	modules.push_back(collision = new ModuleCollision());
