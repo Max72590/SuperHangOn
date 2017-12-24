@@ -42,9 +42,8 @@ void ModuleEnemy::startRace() {
 }
 
 void ModuleEnemy::drawEnemy(float x, float y, float scaleW, float scaleH, Enemy *e) {
-
-	int middleX = e->enemyPosX - (e->current_animation->GetCurrentFrame().w / 2);
-	int middleY = 480 - (e->current_animation->GetCurrentFrame().h * 2);
+	int middleX = (int)e->enemyPosX - ((int)e->current_animation->GetCurrentFrame().w / 2);
+	int middleY = 480 - ((int)e->current_animation->GetCurrentFrame().h * 2);
 	App->renderer->ScaledBlit(sprites, x, y, &(e->current_animation->GetCurrentFrame()), scaleW, scaleH);
 	//e->collider->SetPos(x, y);
 }

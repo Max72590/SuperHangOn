@@ -30,6 +30,8 @@ update_status ModuleFonts::Update(float deltaTime) {
 }
 
 bool ModuleFonts::CleanUp() {
+	App->textures->Unload(texFont);
+	App->textures->Unload(lettersFont);
 	return true;
 }
 
@@ -66,7 +68,7 @@ void ModuleFonts::drawMessage(fontName fn, string message, int posX, int posY) {
 	if (f != nullptr) {
 		vector<SDL_Rect*> rects;
 		f->getTextRects(message, rects);
-		for (int i = 0; i < rects.size(); ++i) {
+		for (int i = 0; i < (int)rects.size(); ++i) {
 			posX += rects[i]->w;
 			App->renderer->Blit(t, posX, posY, rects[i]);
 		}
@@ -104,15 +106,16 @@ Font::~Font() {}
 void Font::getTextRects(string message, vector<SDL_Rect*> &rects) {
 	int charWidth = width / numChars;
 	int charHeigth = height / numChars;
-	for (int i = 0; i < message.size(); ++i) {
-		int num = charToIndex[message[i]];
+	for (int i = 0; i < (int)message.size(); ++i) {
 		if (horizontalOrientation) {
-			SDL_Rect *numRec = new SDL_Rect({ coordX + (charWidth*num), coordY , charWidth , height });
+			SDL_Rect *numRec = new SDL_Rect({ coordX + (charWidth*charToIndex[message[i]]), coordY , charWidth , height });
 			rects.push_back(numRec);
+			delete numRec;
 		}
 		else {
-			SDL_Rect *letterRec = new SDL_Rect({ coordX, coordY + (charHeigth *num) , width , charHeigth });
+			SDL_Rect *letterRec = new SDL_Rect({ coordX, coordY + (charHeigth *charToIndex[message[i]]) , width , charHeigth });
 			rects.push_back(letterRec);
+			delete letterRec;
 		}
 	}
 }

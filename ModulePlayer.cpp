@@ -74,7 +74,6 @@ bool ModulePlayer::Start()
 {
 	LOG("Loading player");
 	graphics = App->textures->Load("rtype/miscellaneous.png");
-
 	destroyed = false;
 	position.x = 320;
 	position.y = 409;
@@ -87,9 +86,7 @@ bool ModulePlayer::Start()
 bool ModulePlayer::CleanUp()
 {
 	LOG("Unloading player");
-
 	App->textures->Unload(graphics);
-
 	return true;
 }
 
@@ -137,20 +134,23 @@ update_status ModulePlayer::Update(float deltaTime)
 		default:
 			break;
 		}
-		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_IDLE || App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
-			speed += decel*deltaTime;
-			if (speed < 0) speed = 0;
+		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+			if (speed > 0) speed += braking;
 		}
-		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
-			speed += accel*deltaTime*1.5;
-			if (speed > maxspeed) speed = maxspeed;
+		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN) {
+			if (speed < maxspeed) speed += accel*deltaTime;
+		}
+		else {
+			if (speed > minspeed) speed += decel*deltaTime;
 		}
 		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT && playerState != IDLE && speed > 0) {
 			playerX -= deltaTime * 2000 * (speed / maxspeed);
+			
 			//if (playerX < -2) playerX = -2;
 		}
 		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT && playerState != IDLE && speed > 0) {
 			playerX += deltaTime * 2000 * (speed/maxspeed);
+
 			//if (playerX < 2) playerX = 2;
 		}
 		/*if (playerX > 1 || playerX < -1) {
@@ -164,8 +164,23 @@ update_status ModulePlayer::Update(float deltaTime)
 		int middleY = 480 - (current_animation->GetCurrentFrame().h);
 		//App->renderer->Blit(graphics, middleX, middleY, &(current_animation->GetCurrentFrame()));
 		App->renderer->ScaledBlit(graphics, middleX, middleY, &(current_animation->GetCurrentFrame()), (current_animation->GetCurrentFrame()).w , (current_animation->GetCurrentFrame()).h );
-		collider->SetPos(position.x, position.y);
+		collider->setPos(middleX, middleY);
 	}
 	return UPDATE_CONTINUE;
 }
 
+float ModulePlayer::getSpeed() const {
+	return speed;
+}
+
+void ModulePlayer::setSpeed(float value) {
+	speed = value;
+}
+
+float ModulePlayer::getValueX() const {
+	return playerX;
+}
+
+void ModulePlayer::offsetX(float value) {
+	playerX += value* (speed / maxspeed)*500;
+}

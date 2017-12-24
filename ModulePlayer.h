@@ -19,6 +19,10 @@ public:
 	bool Start();
 	update_status Update(float deltaTime);
 	bool CleanUp();
+	float getSpeed() const;
+	void setSpeed(float value);
+	float getValueX() const;
+	void offsetX(float value);
 
 public:
 
@@ -33,17 +37,22 @@ public:
 	Animation reverseRight;
 	Animation *animArray[7] = {&idle,&left,&right, &reverseLeft, &reverseRight, &endLeft, &endRight};
 	iPoint position;
-	bool destroyed = false;
-	Collider *collider;
+	Collider *collider = nullptr;
 	state playerState;
+
+
+private:
+	bool destroyed = false;
+	float playerX;
 	float speed;
 	float maxspeed = 240.0;	// get this set on *road*
-	float accel = maxspeed/5;
-	float breaking = -maxspeed;
-	float decel = -maxspeed/5;
-	float offRoadDecel = -maxspeed/2;
-	float offRoadLimit = maxspeed/4;
-	float playerX;
+	float minspeed = 80.0;
+	float accel = maxspeed / 5;
+	float braking = -maxspeed;
+	float decel = -maxspeed / 5;
+	float offRoadDecel = -maxspeed / 2;
+	float offRoadLimit = maxspeed / 4;
+
 };
 
 #endif

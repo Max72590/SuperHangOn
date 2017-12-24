@@ -29,7 +29,7 @@ bool ModuleParticles::Start()
 	laser->anim.frames.push_back({ 232, 103, 16, 12 });
 	laser->anim.frames.push_back({ 249, 103, 16, 12 });
 	laser->anim.speed = 0.3f;
-	App->collision->AddCollider(laser->anim.GetCurrentFrame(), LASER);
+	//App->collision->AddCollider(laser->anim.GetCurrentFrame(), LASER);
 
 	// TODO 12: Create a new "Explosion" particle 
 	// audio: rtype/explosion.wav
@@ -42,7 +42,7 @@ bool ModuleParticles::Start()
 	explosion->anim.frames.push_back({ 419, 296, 33, 30 });
 	explosion->anim.frames.push_back({ 457, 296, 33, 30 });
 	explosion->anim.speed = 0.6f;
-	App->collision->AddCollider(explosion->anim.GetCurrentFrame(), NONE);
+	//App->collision->AddCollider(explosion->anim.GetCurrentFrame(), NONE);
 
 	return true;
 }
@@ -80,34 +80,29 @@ update_status ModuleParticles::PreUpdate(float deltaTime)
 // Update all particle logic and draw them
 update_status ModuleParticles::Update(float deltaTime)
 {
-	for (list<Particle*>::iterator it = active.begin(); it != active.end(); ++it)
+	/*for (list<Particle*>::iterator it = active.begin(); it != active.end(); ++it)
 	{
 		Particle* p = *it;
 
 		p->Update();
 		App->renderer->Blit(graphics, p->position.x, p->position.y, &(p->anim.GetCurrentFrame()));
 
-	}
+	}*/
 
 	return UPDATE_CONTINUE;
 }
 
 void ModuleParticles::AddParticle(const Particle& particle, int x, int y)
 {
-	// TODO 4: Fill in a method to create an instance of a prototype particle
 	Particle *projectile = new Particle(particle);
 	projectile->collider = App->collision->AddCollider(projectile->anim.GetCurrentFrame(), LASER);
 	projectile->position = { x,y };
 	active.push_back(projectile);
 }
 
-// -------------------------------------------------------------
-// -------------------------------------------------------------
-
 Particle::Particle()
 {}
 
-// TODO 3: Fill in a copy constructor
 Particle::Particle(const Particle& p) : anim(p.anim), position(p.position)
 {}
 
@@ -117,11 +112,8 @@ Particle::~Particle()
 
 void Particle::Update()
 {
-	// TODO 5: This is the core of the particle logic
-	// draw and audio will be managed by ModuleParticle::Update()
-	// Note: Set to_delete to true is you want it deleted
 	position = {position.x +5, position.y };
-	collider->SetPos(position.x, position.y);
+	collider->setPos(position.x, position.y);
 	if (position.x > (App->player->position.x) + (SCREEN_WIDTH)) {
 		to_delete = true;
 		collider->to_delete = true;

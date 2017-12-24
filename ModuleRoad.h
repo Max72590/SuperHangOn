@@ -15,17 +15,24 @@
 #define GREEN_DARK SDL_Color({0,150,0,255})
 #define GREEN_LIGHT SDL_Color({0,200,0,255})
 
-struct roadPoint {
-	float worldX, worldY, worldZ, screenScale, screenX, screenY, screenW, curvefactor, clipCoord, spriteXCoord;
+struct roadProp {
+	float spriteXCoord;
 	int spriteID;
-
-	roadPoint() {
-		worldX = worldY = worldZ = screenScale = screenX = screenY = screenW = curvefactor = clipCoord = 0; 
+	Collider *collider = nullptr;
+	roadProp() {
 		spriteXCoord = -1.0f;
 		spriteID = -1;
 	}
 };
 
+struct roadPoint {
+	float worldX, worldY, worldZ, screenScale, screenX, screenY, screenW, curvefactor, clipCoord;
+	roadProp *prop = nullptr;
+	roadPoint() {
+		worldX = worldY = worldZ = screenScale = screenX = screenY = screenW = curvefactor = clipCoord = 0; 
+		prop = new roadProp();
+	}
+};
 
 class ModuleRoad :
 	public Module
@@ -38,22 +45,28 @@ public:
 	update_status Update(float deltaTime);
 	bool CleanUp();
 	void resetRoad();
-	void paintRoad();
+	void paintRoad(float deltaTime);
 	void projection(roadPoint &rp, bool looped);
 	void drawTrack(roadPoint const *p1, roadPoint const *p2, bool const isColor1);
 	void drawSprites(int initPos);
 	void smoothInOut(int previousPos, int startPos, float amount);
 	float calculatePosZ(float speed);
 	float cosinus(float rads);
+	void checkCollisions(roadPoint *rp);
 
 public:
-	SDL_Rect sky;
+	SDL_Rect* sky;
+	SDL_Rect* foreground;
 	SDL_Texture* background = nullptr;
 	SDL_Texture* roadAssets = nullptr;
-	std::vector<roadPoint> roadPoints;
+	std::vector<roadPoint*> roadPoints;
 	std::vector<SDL_Rect*> sprites;
-	std::vector<Enemy> enemies;	// in order, the first is the farthest.
+	std::vector<Enemy*> enemies;	// in order, the first is the farthest.
 
+	// Background
+	float backgroundPosX = 0;
+	float foregroundPosX = 0;
+	float landscapeY = 0;
 	//Road
 	float roadWidth = 2000;
 	float segmentLength = 200;
@@ -66,6 +79,7 @@ public:
 	float camDepth;
 	float drawDistance = 300;
 	float camZPosition =0;
+	float realPosZ = 0;
 	float offsetX = 0;
 	float roadX = 0;
 };

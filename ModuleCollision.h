@@ -23,13 +23,19 @@ struct Collider
 		rect(rectangle)
 	{}
 
-	void SetPos(int x, int y)
+	void setPos(int x, int y)
 	{
 		rect.x = x;
 		rect.y = y;
 	}
 
-	bool CheckCollision(const SDL_Rect& r) const;
+	void setWidthHeight(int w, int h) {
+		rect.w = w;
+		rect.h = h;
+	}
+
+	bool checkCollision(const SDL_Rect& r) const;
+	bool checkCollisionCoordX(SDL_Rect& r) const;
 };
 
 class ModuleCollision : public Module
