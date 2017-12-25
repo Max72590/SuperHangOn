@@ -38,6 +38,16 @@ update_status ModuleGUI::Update(float deltaTime) {
 }
 
 bool ModuleGUI::CleanUp() {
+	delete top;
+	delete time;
+	delete score;
+	delete course;
+	delete courseName;
+	delete stage;
+	delete stageProgression;
+	delete speed;
+
+
 	return true;
 }
 

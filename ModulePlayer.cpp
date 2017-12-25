@@ -62,6 +62,22 @@ ModulePlayer::ModulePlayer(bool active) : Module(active)
 	endLeft.loop = true;
 	endLeft.speed = 0.5f;
 
+	// Falling
+	falling.frames.push_back({ 13, 98, 93, 24 });  // 24
+	falling.frames.push_back({ 242, 91, 93, 24 }); // 24
+	falling.frames.push_back({ 687, 79, 101, 27 }); // 21
+	falling.frames.push_back({ 911, 73, 104, 29 }); // 19
+	falling.frames.push_back({ 1130, 71, 112, 29 }); // 19
+	falling.frames.push_back({ 30, 191, 119, 29 }); // 19
+	falling.frames.push_back({ 257, 190, 117, 30 }); // 18
+	falling.frames.push_back({ 477, 185, 124, 28 }); // 20
+	falling.frames.push_back({ 697, 182, 124, 29 }); // 21
+	falling.frames.push_back({ 917, 177, 119, 30 }); // 25
+	falling.frames.push_back({ 1136, 175, 131, 31 }); // 26
+	falling.frames.push_back({ 36, 294, 135, 33 }); // 29
+	falling.loop = false;
+	falling.speed = 0.1f;
+
 	playerState = IDLE;
 	playerX = 0;
 }
@@ -74,11 +90,13 @@ bool ModulePlayer::Start()
 {
 	LOG("Loading player");
 	graphics = App->textures->Load("rtype/miscellaneous.png");
+	falling_anim = App->textures->Load("rtype/falls.png");
 	destroyed = false;
 	position.x = 320;
 	position.y = 409;
 	collider = App->collision->AddCollider(idle.GetCurrentFrame(), PLAYER);
 	speed = 0;
+	actualTex = graphics;
 	return true;
 }
 
@@ -87,6 +105,7 @@ bool ModulePlayer::CleanUp()
 {
 	LOG("Unloading player");
 	App->textures->Unload(graphics);
+	App->textures->Unload(falling_anim);
 	return true;
 }
 
@@ -94,7 +113,7 @@ bool ModulePlayer::CleanUp()
 update_status ModulePlayer::Update(float deltaTime)
 {
 
-	if (!destroyed){ 
+	if (!destroyed) {
 		switch (playerState)
 		{
 		case IDLE:
@@ -120,38 +139,51 @@ update_status ModulePlayer::Update(float deltaTime)
 			if (current_animation->Finished()) playerState = IDLE;
 			break;
 		case END_LEFT:
-			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_IDLE	|| App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
+			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_IDLE || App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
 				reverseLeft.Reset();
 				playerState = REVERSE_LEFT;
 			}
 			break;
 		case END_RIGHT:
-			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT	|| App->input->GetKey(SDL_SCANCODE_D) == KEY_IDLE) {
+			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_D) == KEY_IDLE) {
 				reverseRight.Reset();
 				playerState = REVERSE_RIGHT;
+			}
+			break;
+		case FALLING:
+			if (speed > 0) {
+				speed += fallDecel*deltaTime;
+
+			}
+			if (speed <= 0) {
+				falling.Reset();
+				playerX = 0;
+				playerState = IDLE;
 			}
 			break;
 		default:
 			break;
 		}
-		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
-			if (speed > 0) speed += braking;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN) {
-			if (speed < maxspeed) speed += accel*deltaTime;
-		}
-		else {
-			if (speed > minspeed) speed += decel*deltaTime;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT && playerState != IDLE && speed > 0) {
-			playerX -= deltaTime * 2000 * (speed / maxspeed);
-			
-			//if (playerX < -2) playerX = -2;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT && playerState != IDLE && speed > 0) {
-			playerX += deltaTime * 2000 * (speed/maxspeed);
+		if (playerState != FALLING) {
+			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+				if (speed > 0) speed += braking;
+			}
+			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN) {
+				if (speed < maxspeed) speed += accel*deltaTime;
+			}
+			else {
+				if (speed > minspeed) speed += decel*deltaTime;
+			}
+			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT && playerState != IDLE && speed > 0) {
+				playerX -= deltaTime * 2000 * (speed / maxspeed);
 
-			//if (playerX < 2) playerX = 2;
+				//if (playerX < -2) playerX = -2;
+			}
+			if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT && playerState != IDLE && speed > 0) {
+				playerX += deltaTime * 2000 * (speed / maxspeed);
+
+				//if (playerX < 2) playerX = 2;
+			}
 		}
 		/*if (playerX > 1 || playerX < -1) {
 			if (speed > offRoadLimit) speed -= offRoadDecel;
@@ -160,10 +192,19 @@ update_status ModulePlayer::Update(float deltaTime)
 }
 	// Draw everything --------------------------------------
 	if (destroyed == false) {
-		int middleX = position.x - (current_animation->GetCurrentFrame().w /2);
-		int middleY = 480 - (current_animation->GetCurrentFrame().h);
+		
 		//App->renderer->Blit(graphics, middleX, middleY, &(current_animation->GetCurrentFrame()));
-		App->renderer->ScaledBlit(graphics, middleX, middleY, &(current_animation->GetCurrentFrame()), (current_animation->GetCurrentFrame()).w , (current_animation->GetCurrentFrame()).h );
+		if (playerState == FALLING) {
+			actualTex = falling_anim;
+			scaleFactor = 2.0f;
+		}
+		else {
+			actualTex = graphics;
+			scaleFactor = 1.0f;
+		}
+		int middleX = position.x - ((current_animation->GetCurrentFrame().w*scaleFactor) / 2);
+		int middleY = SCREEN_HEIGHT - (current_animation->GetCurrentFrame().h)*scaleFactor;
+		App->renderer->ScaledBlit(actualTex, middleX, middleY, &(current_animation->GetCurrentFrame()), (current_animation->GetCurrentFrame()).w*scaleFactor , (current_animation->GetCurrentFrame()).h*scaleFactor);
 		collider->setPos(middleX, middleY);
 	}
 	return UPDATE_CONTINUE;
@@ -173,9 +214,14 @@ float ModulePlayer::getSpeed() const {
 	return speed;
 }
 
+float ModulePlayer::getMinSpeed() const {
+	return minspeed;
+}
+
 void ModulePlayer::setSpeed(float value) {
 	speed = value;
 }
+
 
 float ModulePlayer::getValueX() const {
 	return playerX;
@@ -183,4 +229,8 @@ float ModulePlayer::getValueX() const {
 
 void ModulePlayer::offsetX(float value) {
 	playerX += value* (speed / maxspeed)*500;
+}
+
+void ModulePlayer::setPlayerState(state pState) {
+	playerState = pState;
 }

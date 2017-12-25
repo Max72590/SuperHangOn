@@ -148,7 +148,8 @@ void ModuleRoad::paintRoad(float deltaTime) {
 		drawTrack( (rpPrevious), (rpActual), ((i/3)%2 == 0 ));		
 	}
 	drawSprites(initPos);
-	checkCollisions(rp);
+	roadPoint* nextpoint = roadPoints[(initPos + 1) % roadLength];
+	checkCollisions(nextpoint);
 }
 
 void ModuleRoad::projection(roadPoint &rp, bool looped) {
@@ -250,7 +251,7 @@ float ModuleRoad::calculatePosZ(float speed) {
 void ModuleRoad::checkCollisions(roadPoint *rp) {
 	if (rp->prop->spriteID > -1) {
 		if (App->player->collider->checkCollisionCoordX(rp->prop->collider->rect)) {
-			App->player->setSpeed(0);
+			App->player->setPlayerState(FALLING);
 		}
 	}
 	for (int k = 0; k < (int)App->enemies->enemies.size(); ++k) {
@@ -258,7 +259,8 @@ void ModuleRoad::checkCollisions(roadPoint *rp) {
 		if (e->enemyPosZ == rp->worldZ) {
 			roadPoint *roadP = roadPoints[((int)e->getPosZ()) % roadLength];
 			if (App->player->collider->checkCollisionCoordX(e->collider->rect)) {
-			
+				if (App->player->getSpeed() > App->player->getMinSpeed())
+				App->player->setSpeed(App->player->getMinSpeed());
 			}
 		}
 	}
