@@ -98,17 +98,17 @@ update_status ModuleSceneMapSelection::Update(float deltaTime) {
 }
 
 bool ModuleSceneMapSelection::CleanUp() {
-	/*delete &africaSprite;
-	delete &asiaSprite;
-	delete &americaSprite;
-	delete &europeSprite;
+	App->textures->Unload(background);
+	App->textures->Unload(mapPieces);
 	delete beginnerSprite;
 	delete juniorSprite;
 	delete seniorSprite;
 	delete expertSprite;
-	delete background;
-	delete mapPieces;
-	delete[] animArray;
-	delete[] classSprites;*/
+	delete mapSelectionTitle;
+	beginnerSprite = nullptr;
+	juniorSprite = nullptr;
+	seniorSprite = nullptr;
+	expertSprite = nullptr;
+	mapSelectionTitle = nullptr;
 	return true;
 }

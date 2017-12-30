@@ -55,9 +55,10 @@ bool ModuleParticles::CleanUp()
 
 	for (list<Particle*>::iterator it = active.begin(); it != active.end(); ++it)
 		RELEASE(*it);
-
+	
 	active.clear();
-
+	delete laser;
+	delete explosion;
 	return true;
 }
 

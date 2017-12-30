@@ -53,6 +53,7 @@ public:
 	float calculatePosZ(float speed);
 	float cosinus(float rads);
 	void checkCollisions(roadPoint *rp);
+	void setUpEnding();
 
 public:
 	SDL_Rect* sky;
@@ -74,6 +75,8 @@ public:
 	float segmentsToDraw = 300;
 	float roadY = 0;
 	int roadLength =0;
+	int endSegmentIndex;
+	bool crossedEndSegment = false;
 	//Camera projection vars
 	int camHeight = 1500;
 	float camDepth;
@@ -82,6 +85,11 @@ public:
 	float realPosZ = 0;
 	float offsetX = 0;
 	float roadX = 0;
+	// Other variables
+	bool runTimer, runGameOverTimer;
+	float timerAcum;
+	int raceSeconds;
+	int gameOverCountdown;
 };
 
 #endif // __MODULEROAD_H__

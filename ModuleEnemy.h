@@ -23,15 +23,20 @@ struct Enemy {
 	Animation reverseRight;
 	Animation *animArray[7] = { &idle,&left,&right, &reverseLeft, &reverseRight, &endLeft, &endRight };
 	float enemyPosZ, enemyPosX;
-	
+	float speed = 0;
+	bool enabled = true;
 	Enemy(float x, float z, bool colorEnemy);
 	Enemy(const Enemy& p);
 	~Enemy();
 	void Update(float deltaTime);
 	void setPos(float posX, float posZ);
-	SDL_Rect* getActualAnimRect();
-	float getPosZ();
+	void setSpeed (float speed);
+	SDL_Rect* getActualAnimRect() const;
+	float getPosZ() const;
+	float getPosX() const;
 	void setMoveAnim(float direction);
+	void setEnabled(bool enable);
+	bool enemyEnabled()const;
 };
 
 class ModuleEnemy :
@@ -45,8 +50,8 @@ public:
 	bool CleanUp();
 	void startRace();
 	void drawEnemy(float x, float y, float scaleW, float scaleH, Enemy *e);
-	void addEnemy(Enemy &e,float x, float y);
-
+	void addEnemy(Enemy &e,float x, float z);
+	void enableMovement(bool enabled);
 public:
 	SDL_Texture* sprites = nullptr;
 	std::vector<Enemy*> enemies;
@@ -54,8 +59,7 @@ public:
 	Enemy *yellowEnemy;
 
 private:
-	bool startRunning = true;
-
+	bool startRunning = true;	
 };
 
 #endif 

@@ -5,6 +5,8 @@
 #include "ModuleCollision.h"
 #include "Animation.h"
 #include "Point.h"
+#include "ModuleRoad.h"
+
 
 struct SDL_Texture;
 
@@ -23,8 +25,12 @@ public:
 	void setSpeed(float value);
 	float getValueX() const;
 	float getMinSpeed()const;
+	float getScore() const;
+	void addScore(float value);
 	void offsetX(float value);
+	state getPlayerState()const;
 	void setPlayerState(state playerState);
+	void animateToIDLE();
 
 public:
 	SDL_Texture *actualTex = nullptr;
@@ -48,17 +54,19 @@ public:
 private:
 	float scaleFactor = 1.0f;
 	bool destroyed = false;
+	bool reachedEndLine;
 	float playerX;
 	float speed;
-	float maxspeed = 240.0;	// get this set on *road*
-	float minspeed = 80.0;
-	float accel = maxspeed / 5;
+	float maxspeed = 240.0f;	// get this set on *road*
+	float minspeed = 60.0f;
+	float accel = maxspeed / 5.0f;
 	float braking = -maxspeed;
-	float decel = -maxspeed / 5;
-	float fallDecel = -maxspeed / 2;
-	float offRoadDecel = -maxspeed / 2;
-	float offRoadLimit = maxspeed / 4;
-
+	float decel = -maxspeed / 5.0f;
+	float fallDecel = -maxspeed / 2.0f;
+	float offRoadDecel = -maxspeed / 20.0f;
+	float offRoadLimit = maxspeed / 4.0f;
+	float maxPlayerX = 4000;
+	float score;
 };
 
 #endif

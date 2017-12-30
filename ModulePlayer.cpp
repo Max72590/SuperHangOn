@@ -7,6 +7,7 @@
 #include "ModuleFadeToBlack.h"
 #include "ModuleAudio.h"
 #include "ModulePlayer.h"
+#include "ModuleRoad.h"
 
 
 // Reference at https://www.youtube.com/watch?v=OEhmUuehGOA
@@ -96,7 +97,9 @@ bool ModulePlayer::Start()
 	position.y = 409;
 	collider = App->collision->AddCollider(idle.GetCurrentFrame(), PLAYER);
 	speed = 0;
+	score = 0;
 	actualTex = graphics;
+	reachedEndLine = false;
 	return true;
 }
 
@@ -113,7 +116,7 @@ bool ModulePlayer::CleanUp()
 update_status ModulePlayer::Update(float deltaTime)
 {
 
-	if (!destroyed) {
+	if (!destroyed && !reachedEndLine) {
 		switch (playerState)
 		{
 		case IDLE:
@@ -164,32 +167,49 @@ update_status ModulePlayer::Update(float deltaTime)
 		default:
 			break;
 		}
-		if (playerState != FALLING) {
-			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
-				if (speed > 0) speed += braking;
+		if (playerState != FALLING && !reachedEndLine) {
+			if ((playerX > (maxPlayerX / 2) || playerX < (-maxPlayerX / 2)) && (speed > offRoadLimit)) {
+				speed += offRoadDecel;
 			}
-			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN) {
+			else if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {				
 				if (speed < maxspeed) speed += accel*deltaTime;
+			}
+			else if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+				if (speed > 0) speed += braking;
+				if (speed < 0) speed = 0;
 			}
 			else {
 				if (speed > minspeed) speed += decel*deltaTime;
 			}
 			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT && playerState != IDLE && speed > 0) {
 				playerX -= deltaTime * 2000 * (speed / maxspeed);
-
-				//if (playerX < -2) playerX = -2;
+				if (playerX < -maxPlayerX ) playerX = -maxPlayerX ;
 			}
 			if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT && playerState != IDLE && speed > 0) {
 				playerX += deltaTime * 2000 * (speed / maxspeed);
-
-				//if (playerX < 2) playerX = 2;
+				if (playerX > maxPlayerX ) playerX = maxPlayerX ;
 			}
 		}
+
 		/*if (playerX > 1 || playerX < -1) {
 			if (speed > offRoadLimit) speed -= offRoadDecel;
 		}*/
 		current_animation = animArray[playerState];
-}
+	}
+	if (reachedEndLine) {
+		if (playerX > 0.0f) {
+			playerX -= deltaTime * 2000 * (speed/maxspeed);
+			if (playerX < 0) playerX = 0.0f;
+		}
+		else if (playerX < 0.0f) {
+			playerX += deltaTime * 2000 * (speed/maxspeed);
+			if (playerX > 0) playerX = 0.0f;
+		}
+		if (speed > 0) {
+			speed += decel*deltaTime;
+			if (speed < 0) speed = 0;
+		}
+	}
 	// Draw everything --------------------------------------
 	if (destroyed == false) {
 		
@@ -231,6 +251,38 @@ void ModulePlayer::offsetX(float value) {
 	playerX += value* (speed / maxspeed)*500;
 }
 
+state ModulePlayer::getPlayerState()const {
+	return playerState;
+}
+
+
 void ModulePlayer::setPlayerState(state pState) {
 	playerState = pState;
 }
+
+void ModulePlayer::animateToIDLE() {
+	switch (playerState) {
+	case END_LEFT:
+		App->player->setPlayerState(REVERSE_LEFT);
+		break;
+	case END_RIGHT:
+		App->player->setPlayerState(REVERSE_RIGHT);
+		break;
+	case LEANING_LEFT:
+		App->player->setPlayerState(REVERSE_LEFT);
+		break;
+	case LEANING_RIGHT:
+		App->player->setPlayerState(REVERSE_RIGHT);
+		break;
+	}
+	reachedEndLine = true;
+}
+
+float  ModulePlayer::getScore() const{
+	return score;
+}
+
+void ModulePlayer::addScore(float value) {
+	score += value;
+}
+

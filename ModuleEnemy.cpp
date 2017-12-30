@@ -16,7 +16,7 @@ bool ModuleEnemy::Start() {
 	sprites = App->textures->Load("rtype/miscellaneous.png");
 	greenEnemy = new Enemy(0, 0, true);
 	yellowEnemy = new Enemy(0, 0, false);
-	startRunning = true;
+	startRunning = false;
 	return true;
 }
 
@@ -29,13 +29,15 @@ update_status ModuleEnemy::Update(float deltaTime) {
 
 bool ModuleEnemy::CleanUp() {
 	App->textures->Unload(sprites);
+	for (int i = 0; i < enemies.size(); ++i) {
+		RELEASE(enemies[i]);
+	}
+	enemies.clear();
+	delete greenEnemy;
+	delete yellowEnemy;
 	return true;
 }
 
-void Enemy::setPos(float posX, float posZ) {
-	enemyPosX = posX;
-	enemyPosZ = posZ;
-}
 
 void ModuleEnemy::startRace() {
 	startRunning = true;
@@ -115,38 +117,56 @@ Enemy::Enemy(float x, float z, bool greenColor) {
 }
 
 Enemy::Enemy(const Enemy& p) : idle(p.idle), left(p.left), right(p.right), endLeft(p.endLeft), endRight(p.endRight),
-reverseLeft(p.reverseLeft), reverseRight(p.reverseRight), enemyAnimState(p.enemyAnimState),
+reverseLeft(p.reverseLeft), reverseRight(p.reverseRight), speed(p.speed), enemyAnimState(p.enemyAnimState),
 current_animation(p.current_animation) {}
 
 Enemy::~Enemy() {}
 
 void Enemy::Update(float deltaTime) {
-	switch (enemyAnimState) {
-	case E_LEANING_LEFT:
-		if (current_animation->Finished()) enemyAnimState = E_END_LEFT;
-		break;
-	case E_LEANING_RIGHT:
-		if (current_animation->Finished()) enemyAnimState = E_END_RIGHT;
-		break;
-	case E_REVERSE_LEFT:
-		if (current_animation->Finished()) enemyAnimState = E_IDLE;
-		break;
-	case E_REVERSE_RIGHT:
-		if (current_animation->Finished()) enemyAnimState = E_IDLE;
-		break;
+	if (enabled) {
+		enemyPosZ += speed;
+		switch (enemyAnimState) {
+		case E_LEANING_LEFT:
+			if (current_animation->Finished()) enemyAnimState = E_END_LEFT;
+			break;
+		case E_LEANING_RIGHT:
+			if (current_animation->Finished()) enemyAnimState = E_END_RIGHT;
+			break;
+		case E_REVERSE_LEFT:
+			if (current_animation->Finished()) enemyAnimState = E_IDLE;
+			break;
+		case E_REVERSE_RIGHT:
+			if (current_animation->Finished()) enemyAnimState = E_IDLE;
+			break;
+		}
+		current_animation = animArray[enemyAnimState];
+		
 	}
-	current_animation = animArray[enemyAnimState];
-	//if (enemyPosZ > 250) enemyPosZ += 2;
-	//else	enemyPosZ += 1;
-	//enemyPosZ += 1;
 }
 
-SDL_Rect* Enemy::getActualAnimRect() {
+SDL_Rect* Enemy::getActualAnimRect() const {
 	return &current_animation->GetCurrentFrame();
 }
 
-float Enemy::getPosZ() {
+float Enemy::getPosZ()const {
 	return enemyPosZ;
+}
+
+float Enemy::getPosX()const {
+	return enemyPosX;
+}
+
+void Enemy::setPos(float posX, float posZ) {
+	enemyPosX = posX;
+	enemyPosZ = posZ;
+}
+
+void::Enemy::setSpeed(float value) {
+	speed = value;
+}
+
+void Enemy::setEnabled(bool enable) {
+	enabled = enable;
 }
 
 void Enemy::setMoveAnim(float direction) {
@@ -160,4 +180,12 @@ void Enemy::setMoveAnim(float direction) {
 		if (direction < 0) enemyAnimState = E_LEANING_LEFT;
 		else if (direction > 0) enemyAnimState = E_LEANING_RIGHT;
 	}
+}
+
+void  ModuleEnemy::enableMovement(bool enabled){
+	startRunning = enabled;
+}
+
+bool Enemy::enemyEnabled()const {
+	return enabled;
 }

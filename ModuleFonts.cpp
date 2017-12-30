@@ -71,7 +71,9 @@ void ModuleFonts::drawMessage(fontName fn, string message, int posX, int posY) {
 		for (int i = 0; i < (int)rects.size(); ++i) {
 			posX += rects[i]->w;
 			App->renderer->Blit(t, posX, posY, rects[i]);
+			delete rects[i];
 		}
+		
 	} 
 	else  LOG("ERROR: Not valid font selected");
 }
@@ -108,14 +110,10 @@ void Font::getTextRects(string message, vector<SDL_Rect*> &rects) {
 	int charHeigth = height / numChars;
 	for (int i = 0; i < (int)message.size(); ++i) {
 		if (horizontalOrientation) {
-			SDL_Rect *numRec = new SDL_Rect({ coordX + (charWidth*charToIndex[message[i]]), coordY , charWidth , height });
-			rects.push_back(numRec);
-			delete numRec;
+			rects.push_back(new SDL_Rect({ coordX + (charWidth*charToIndex[message[i]]), coordY , charWidth , height }));
 		}
 		else {
-			SDL_Rect *letterRec = new SDL_Rect({ coordX, coordY + (charHeigth *charToIndex[message[i]]) , width , charHeigth });
-			rects.push_back(letterRec);
-			delete letterRec;
+			rects.push_back(new SDL_Rect({ coordX, coordY + (charHeigth *charToIndex[message[i]]) , width , charHeigth }));
 		}
 	}
 }

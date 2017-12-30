@@ -52,6 +52,7 @@ update_status ModuleSceneMusicSelection::Update(float deltaTime) {
 	{
 		App->fade->FadeToBlack((Module*)App->road, this);
 		App->audio->LoadFx("GameFX/starting.wav");
+		App->startGameModules();
 	}
 	return UPDATE_CONTINUE;
 }

@@ -14,7 +14,8 @@ public:
 	update_status Update(float deltaTime);
 	bool CleanUp();
 	void setMapSpecificValues(std::string mapName);
-
+	void switchGUImodeToScore(bool newMode);
+	void updateGUIValues(int time, int score, int speed);
 
 public:
 	// Sprites & Textures
@@ -34,7 +35,10 @@ public:
 	SDL_Rect *stageNumber;
 	// Map variables
 	int current_stage;
-	int elapsed_time;
+	int elapsed_time = 0;
+	int playerScore = 0;
+	int playerSpeed = 0;
 	int stageNum;
+	bool showScores;
 };
 

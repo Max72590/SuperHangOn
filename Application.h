@@ -37,6 +37,8 @@ public:
 	bool Init();
 	update_status Update();
 	bool CleanUp();
+	void startGameModules();
+	void stopGameModules();
 
 public:
 	ModuleRender* renderer;
