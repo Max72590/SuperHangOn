@@ -79,8 +79,12 @@ ModulePlayer::ModulePlayer(bool active) : Module(active)
 	falling.loop = false;
 	falling.speed = 0.1f;
 
+	playerStopped = new SDL_Rect({ 180, 558, 67, 147 });
+
 	playerState = IDLE;
 	playerX = 0;
+
+
 }
 
 ModulePlayer::~ModulePlayer()
@@ -100,6 +104,7 @@ bool ModulePlayer::Start()
 	score = 0;
 	actualTex = graphics;
 	reachedEndLine = false;
+	startRunning = false;
 	return true;
 }
 
@@ -116,7 +121,7 @@ bool ModulePlayer::CleanUp()
 update_status ModulePlayer::Update(float deltaTime)
 {
 
-	if (!destroyed && !reachedEndLine) {
+	if (!destroyed && !reachedEndLine && startRunning) {
 		switch (playerState)
 		{
 		case IDLE:
@@ -222,10 +227,20 @@ update_status ModulePlayer::Update(float deltaTime)
 			actualTex = graphics;
 			scaleFactor = 1.0f;
 		}
-		int middleX = position.x - ((current_animation->GetCurrentFrame().w*scaleFactor) / 2);
-		int middleY = SCREEN_HEIGHT - (current_animation->GetCurrentFrame().h)*scaleFactor;
-		App->renderer->ScaledBlit(actualTex, middleX, middleY, &(current_animation->GetCurrentFrame()), (current_animation->GetCurrentFrame()).w*scaleFactor , (current_animation->GetCurrentFrame()).h*scaleFactor);
-		collider->setPos(middleX, middleY);
+		if (!startRunning || speed <= 0) {
+			int middleX = position.x - ((playerStopped->w*scaleFactor) / 2);
+			int middleY = SCREEN_HEIGHT - (playerStopped->h)*scaleFactor;
+			actualTex = graphics;
+			scaleFactor = 1.0f;
+			App->renderer->ScaledBlit(actualTex, middleX, middleY, playerStopped, playerStopped->w*scaleFactor, playerStopped->h*scaleFactor);
+			collider->setPos(middleX, middleY);
+		}
+		else {
+			int middleX = position.x - ((current_animation->GetCurrentFrame().w*scaleFactor) / 2);
+			int middleY = SCREEN_HEIGHT - (current_animation->GetCurrentFrame().h)*scaleFactor;
+			App->renderer->ScaledBlit(actualTex, middleX, middleY, &(current_animation->GetCurrentFrame()), (current_animation->GetCurrentFrame()).w*scaleFactor, (current_animation->GetCurrentFrame()).h*scaleFactor);
+			collider->setPos(middleX, middleY);
+		}
 	}
 	return UPDATE_CONTINUE;
 }
@@ -286,3 +301,6 @@ void ModulePlayer::addScore(float value) {
 	score += value;
 }
 
+void ModulePlayer::activatePlayer(bool activate) {
+	startRunning = activate;
+}

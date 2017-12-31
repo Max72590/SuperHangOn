@@ -23,7 +23,7 @@ struct Enemy {
 	Animation reverseRight;
 	Animation *animArray[7] = { &idle,&left,&right, &reverseLeft, &reverseRight, &endLeft, &endRight };
 	float enemyPosZ, enemyPosX;
-	float speed = 0;
+	float speed;
 	bool enabled = true;
 	Enemy(float x, float z, bool colorEnemy);
 	Enemy(const Enemy& p);

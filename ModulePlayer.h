@@ -31,8 +31,10 @@ public:
 	state getPlayerState()const;
 	void setPlayerState(state playerState);
 	void animateToIDLE();
+	void activatePlayer(bool activate);
 
 public:
+	SDL_Rect *playerStopped;
 	SDL_Texture *actualTex = nullptr;
 	SDL_Texture* graphics = nullptr;
 	SDL_Texture* falling_anim = nullptr;
@@ -54,7 +56,7 @@ public:
 private:
 	float scaleFactor = 1.0f;
 	bool destroyed = false;
-	bool reachedEndLine;
+	bool reachedEndLine,startRunning;
 	float playerX;
 	float speed;
 	float maxspeed = 240.0f;	// get this set on *road*

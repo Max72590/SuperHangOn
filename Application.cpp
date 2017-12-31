@@ -116,6 +116,7 @@ void Application::startGameModules() {
 }
 
 void Application::stopGameModules() {
+	player->activatePlayer(false);
 	gui->Disable();
 	enemies->Disable();
 	player->Disable();

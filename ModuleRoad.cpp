@@ -96,12 +96,31 @@ bool ModuleRoad::Start() {
 	for (int j =720; j < 970; ++j) {
 		if ((j % 20) == 0 ) {
 			(*roadPoints[j]).prop->spriteID = 4;
-			(*roadPoints[j]).prop->spriteXCoord = -4.0f + (*roadPoints[j]).curvefactor;
+			(*roadPoints[j]).prop->spriteXCoord = 5.0f + (*roadPoints[j]).curvefactor;
+			(*roadPoints[j]).prop->scalefactor = 2.0f;
 			(*roadPoints[j]).prop->collider = App->collision->AddCollider(*sprites[(*roadPoints[j]).prop->spriteID], WALL);
 			(*roadPoints[j]).prop->tex = roadSigns;
 		}
 	}
+	for (int j = 2000; j < 2200; ++j) {
+		if ((j % 20) == 0) {
+			(*roadPoints[j]).prop->spriteID = 0;
+			(*roadPoints[j]).prop->spriteXCoord = -2.0f + (*roadPoints[j]).curvefactor;
+			(*roadPoints[j]).prop->collider = App->collision->AddCollider(*sprites[(*roadPoints[j]).prop->spriteID], WALL);
+			(*roadPoints[j]).prop->tex = roadDecorations;
+		}
+	}
+	for (int j = 2400; j < 2600; ++j) {
+		if ((j % 20) == 0) {
+			(*roadPoints[j]).prop->spriteID = 0;
+			(*roadPoints[j]).prop->spriteXCoord = -2.0f + (*roadPoints[j]).curvefactor;
+			(*roadPoints[j]).prop->collider = App->collision->AddCollider(*sprites[(*roadPoints[j]).prop->spriteID], WALL);
+			(*roadPoints[j]).prop->tex = roadDecorations;
+		}
+	}
 	App->enemies->addEnemy(*(App->enemies->greenEnemy), -roadWidth/2, 20);
+	App->enemies->addEnemy(*(App->enemies->greenEnemy), roadWidth / 2, 20);
+	App->enemies->addEnemy(*(App->enemies->yellowEnemy), 0, 40);
 	for (int i = 0; i < (int)App->enemies->enemies.size(); ++i) {
 		App->enemies->enemies[i]->collider = App->collision->AddCollider(App->enemies->enemies[i]->current_animation->GetCurrentFrame() , ENEMY);
 		switch (i) {
@@ -109,25 +128,24 @@ bool ModuleRoad::Start() {
 				App->enemies->enemies[i]->setSpeed(0.5f);
 				break;
 			case 1:
-				App->enemies->enemies[i]->setSpeed(0.7f);
+				App->enemies->enemies[i]->setSpeed(0.6f);
 				break;
 			case 2:
-				App->enemies->enemies[i]->setSpeed(0.9f);
+				App->enemies->enemies[i]->setSpeed(0.8f);
 				break;
 			case 3:
-				App->enemies->enemies[i]->setSpeed(1.1f);
+				App->enemies->enemies[i]->setSpeed(0.7f);
 				break;
 			case 4:
-				App->enemies->enemies[i]->setSpeed(1.3f);
+				App->enemies->enemies[i]->setSpeed(0.5f);
 				break;
 		}
 	}
 
 	backgroundPosX = -128;
-	runTimer = true;
 	runGameOverTimer = false;
 	timerAcum = 0;
-	raceSeconds = 10;
+	raceSeconds = 60;
 	gameOverCountdown = 10;
 	//App->player->Enable(); // deret dis
 	return true;
@@ -144,6 +162,7 @@ update_status ModuleRoad::Update(float deltaTime) {
 	if (semaphore.Finished()) {
 		App->enemies->startRace();
 		runTimer = true;
+		App->player->activatePlayer(true);
 	}
 	if ( actualSeg && !crossedEndSegment ){
 		crossedEndSegment = true;

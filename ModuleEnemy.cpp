@@ -22,7 +22,7 @@ bool ModuleEnemy::Start() {
 
 update_status ModuleEnemy::Update(float deltaTime) {
 	if (startRunning) {
-		for (Enemy *e : enemies)	e->Update(deltaTime);
+		for (int i = 0; i < enemies.size(); ++i)	enemies[i]->Update(deltaTime);
 	}
 	return UPDATE_CONTINUE;
 }
@@ -120,6 +120,7 @@ Enemy::Enemy(float x, float z, bool greenColor) {
 	enemyAnimState = E_IDLE;
 	enemyPosX = 0;
 	enemyPosZ = 0;
+	speed = 1.0f;
 }
 
 Enemy::Enemy(const Enemy& p) : idle(p.idle), left(p.left), right(p.right), endLeft(p.endLeft), endRight(p.endRight),
@@ -146,7 +147,9 @@ void Enemy::Update(float deltaTime) {
 			break;
 		}
 		current_animation = animArray[enemyAnimState];
-		
+		if (enemyPosZ > 500) {
+			speed = 0.5f;
+		}
 	}
 }
 
