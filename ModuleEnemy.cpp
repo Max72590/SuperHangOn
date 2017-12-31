@@ -56,6 +56,12 @@ void ModuleEnemy::addEnemy(Enemy &e, float x, float y) {
 	enemies.push_back(enemy);
 }
 
+void ModuleEnemy::updateEnemyCollider(Enemy *e, int posx, int posy, int width, int height) {
+	e->collider->setPos(posx,posy);
+	e->collider->setWidthHeight(width,height);
+}
+
+
 // Enemy struct & functions
 
 Enemy::Enemy(float x, float z, bool greenColor) {

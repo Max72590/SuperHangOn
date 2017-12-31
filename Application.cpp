@@ -34,11 +34,11 @@ Application::Application()
 	modules.push_back(map_selec = new ModuleSceneMapSelection(false));
 	modules.push_back(music_selec = new ModuleSceneMusicSelection(false));
 	modules.push_back(scene_space = new ModuleSceneSpace(false));
-	modules.push_back(enemies = new ModuleEnemy(true));
+	modules.push_back(enemies = new ModuleEnemy(false));
 	modules.push_back(road = new ModuleRoad(false));
 	modules.push_back(player = new ModulePlayer(false));
 	modules.push_back(fonts = new ModuleFonts(true));
-	modules.push_back(gui = new ModuleGUI(true));
+	modules.push_back(gui = new ModuleGUI(false));
 
 	// Modules to draw on top of game logic
 	modules.push_back(collision = new ModuleCollision());
@@ -71,6 +71,7 @@ bool Application::Init()
 	//fade->FadeToBlack(scene_intro, nullptr, 3.0f);
 	//fade->FadeToBlack(music_selec, nullptr, 3.0f);
 	fade->FadeToBlack(road, nullptr, 3.0f);
+	startGameModules();
 	gameClock = clock();
 	return ret;
 }
@@ -109,7 +110,7 @@ bool Application::CleanUp()
 
 void Application::startGameModules() {
 	gui->Enable();
-	gui->switchGUImodeToScore(false);
+	gui->switchGUImodeToScore(GAME_MODE);
 	enemies->Enable();
 	player->Enable();
 }

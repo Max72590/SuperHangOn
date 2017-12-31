@@ -17,32 +17,41 @@ bool ModuleGUI::Start() {
 	sprites = App->textures->Load("rtype/miscellaneous.png");
 	// Load default map values
 	setMapSpecificValues("asia");	
-	showScores = false;
+	actualMode = GAME_MODE;
 	return true;
 }
 
 update_status ModuleGUI::Update(float deltaTime) {
-	if (!showScores) {
-		App->renderer->Blit(sprites, 50, 15, top);
-		App->renderer->Blit(sprites, 270, 15, time);
-		App->renderer->Blit(sprites, 380, 15, score);
-		App->renderer->Blit(sprites, 50, 50, course);
-		App->renderer->Blit(sprites, 160, 50, courseName);
-		App->renderer->Blit(sprites, 50, 70, stage);
-		App->renderer->Blit(sprites, 10, 90, stageProgression);
-		App->renderer->Blit(sprites, 400, 50, speed);
-		App->fonts->drawMessage(COLOR_RED, to_string(playerScore), 120, 20); //
-		App->fonts->drawMessage(COLOR_GREEN, to_string(playerScore), 465, 20);
-		App->fonts->drawMessage(COLOR_WHITE, to_string(playerSpeed), 475, 50);
-		App->fonts->drawMessage(COLOR_WHITE, std::to_string(stageNum), 145, 70);
-		App->fonts->drawMessage(TIME_FONT, to_string(elapsed_time), 270, 50);
-	}
-	else {
-		App->fonts->drawMessage(WHITE_LETTERS, "course", 150, 100);
-		App->fonts->drawMessage(WHITE_LETTERS, "clear", 200, 100);
-		App->fonts->drawMessage(WHITE_LETTERS, "final", 150, 150);
-		App->fonts->drawMessage(WHITE_LETTERS, "score", 200, 150);
-
+	switch (actualMode) {
+		case GAME_MODE:
+				App->renderer->Blit(sprites, 50, 15, top);
+				App->renderer->Blit(sprites, 270, 15, time);
+				App->renderer->Blit(sprites, 380, 15, score);
+				App->renderer->Blit(sprites, 50, 50, course);
+				App->renderer->Blit(sprites, 160, 50, courseName);
+				App->renderer->Blit(sprites, 50, 70, stage);
+				App->renderer->Blit(sprites, 10, 90, stageProgression);
+				App->renderer->Blit(sprites, 400, 50, speed);
+				App->fonts->drawMessage(COLOR_RED, to_string(playerScore), 120, 20); //
+				App->fonts->drawMessage(COLOR_GREEN, to_string(playerScore), 465, 20);
+				App->fonts->drawMessage(COLOR_WHITE, to_string(playerSpeed), 475, 50);
+				App->fonts->drawMessage(COLOR_WHITE, std::to_string(stageNum), 145, 70);
+				App->fonts->drawMessage(TIME_FONT, to_string(elapsed_time), 270, 50);
+				break;
+			case SCORES_MODE:
+				App->fonts->drawMessage(WHITE_LETTERS, "course", 150, 100);
+				App->fonts->drawMessage(WHITE_LETTERS, "clear", 200, 100);
+				App->fonts->drawMessage(WHITE_LETTERS, "final", 150, 150);
+				App->fonts->drawMessage(WHITE_LETTERS, "score", 200, 150);
+				App->fonts->drawMessage(TIME_FONT, to_string(playerScore), 200, 200);
+				break;
+			case GAME_OVER_MODE:
+				App->fonts->drawMessage(WHITE_LETTERS, "game", 150, 100);
+				App->fonts->drawMessage(WHITE_LETTERS, "over", 200, 100);
+				App->fonts->drawMessage(WHITE_LETTERS, "final", 150, 150);
+				App->fonts->drawMessage(WHITE_LETTERS, "score", 200, 150);
+				App->fonts->drawMessage(TIME_FONT, to_string(playerScore), 200, 200);
+				break;
 	}
 	return UPDATE_CONTINUE;
 }
@@ -86,8 +95,8 @@ void ModuleGUI::setMapSpecificValues(string mapName) {
 	stageProgression = new SDL_Rect({32,coordY,(courseX-5)-32,19});
 }
 
-void ModuleGUI::switchGUImodeToScore(bool newMode) {
-	showScores = newMode;
+void ModuleGUI::switchGUImodeToScore(guiMode newMode) {
+	actualMode = newMode;
 }
 
 void ModuleGUI::updateGUIValues(int time, int score, int speed) {

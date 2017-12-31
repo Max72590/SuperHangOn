@@ -52,6 +52,7 @@ public:
 	void drawEnemy(float x, float y, float scaleW, float scaleH, Enemy *e);
 	void addEnemy(Enemy &e,float x, float z);
 	void enableMovement(bool enabled);
+	void updateEnemyCollider(Enemy *e,int posx,int posy,int width, int height);
 public:
 	SDL_Texture* sprites = nullptr;
 	std::vector<Enemy*> enemies;

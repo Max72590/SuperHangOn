@@ -16,12 +16,15 @@
 #define GREEN_LIGHT SDL_Color({0,200,0,255})
 
 struct roadProp {
-	float spriteXCoord;
+	float spriteXCoord,scalefactor;
 	int spriteID;
 	Collider *collider = nullptr;
+	SDL_Texture *tex = nullptr;
+	
 	roadProp() {
 		spriteXCoord = -1.0f;
 		spriteID = -1;
+		scalefactor = 1;
 	}
 };
 
@@ -53,13 +56,16 @@ public:
 	float calculatePosZ(float speed);
 	float cosinus(float rads);
 	void checkCollisions(roadPoint *rp);
-	void setUpEnding();
+	void setUpEnding(bool gameOver);
+
 
 public:
+	Animation semaphore;
 	SDL_Rect* sky;
 	SDL_Rect* foreground;
 	SDL_Texture* background = nullptr;
-	SDL_Texture* roadAssets = nullptr;
+	SDL_Texture* roadDecorations = nullptr;
+	SDL_Texture* roadSigns = nullptr;
 	std::vector<roadPoint*> roadPoints;
 	std::vector<SDL_Rect*> sprites;
 	std::vector<Enemy*> enemies;	// in order, the first is the farthest.
@@ -88,8 +94,7 @@ public:
 	// Other variables
 	bool runTimer, runGameOverTimer;
 	float timerAcum;
-	int raceSeconds;
-	int gameOverCountdown;
+	int raceSeconds, gameOverCountdown;
 };
 
 #endif // __MODULEROAD_H__

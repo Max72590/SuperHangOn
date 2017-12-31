@@ -4,6 +4,8 @@
 #include "ModuleFonts.h"
 #include <string>
 
+enum guiMode { GAME_MODE, SCORES_MODE, GAME_OVER_MODE};
+
 class ModuleGUI :
 	public Module
 {
@@ -14,7 +16,7 @@ public:
 	update_status Update(float deltaTime);
 	bool CleanUp();
 	void setMapSpecificValues(std::string mapName);
-	void switchGUImodeToScore(bool newMode);
+	void switchGUImodeToScore(guiMode newMode);
 	void updateGUIValues(int time, int score, int speed);
 
 public:
@@ -39,6 +41,6 @@ public:
 	int playerScore = 0;
 	int playerSpeed = 0;
 	int stageNum;
-	bool showScores;
+	guiMode actualMode;
 };
 

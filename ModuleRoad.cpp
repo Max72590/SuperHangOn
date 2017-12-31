@@ -18,12 +18,10 @@ ModuleRoad::~ModuleRoad()
 {
 }
 
+
 bool ModuleRoad::Start() {
-	int hillheight = 0;
-	bool rising = true;
-	int hillCount = 0;
-	int percent = 0;
-	int hillCounter = 0;
+	camZPosition = 0;
+	roadLength = roadPoints.size();
 	for (float i = 0; i < 5000; ++i) {
 		roadPoint *rp = new roadPoint();
 		rp->worldZ = i*segmentLength;
@@ -49,26 +47,58 @@ bool ModuleRoad::Start() {
 	//camDepth = 0.58 
 	sky = new SDL_Rect({8,67,512 ,36});
 	foreground = new SDL_Rect({ 534,63,319,12 });
-	// 340 63 312 12
 	background = App->textures->Load("rtype/backgrounds.png");
-	roadAssets = App->textures->Load("rtype/sprites.png");
+	roadDecorations = App->textures->Load("rtype/sprites.png");
+	roadSigns = App->textures->Load("rtype/stuff.png");
+	semaphore.frames.push_back({ 339, 421, 31, 73 });
+	semaphore.frames.push_back({ 370, 421, 31, 73 });
+	semaphore.frames.push_back({ 401, 421, 31, 73 });
+	semaphore.frames.push_back({ 432, 421, 31, 73 });
+	semaphore.loop = false;
+	semaphore.speed = 0.016f;
+	endSegmentIndex = 4000;
+	(*roadPoints[endSegmentIndex]).prop->spriteID = 3;
+	(*roadPoints[endSegmentIndex]).prop->spriteXCoord = -1.5f + (*roadPoints[25]).curvefactor;
+	(*roadPoints[endSegmentIndex]).prop->tex = roadSigns;
+	(*roadPoints[endSegmentIndex]).prop->scalefactor = 4.0f;
+	(*roadPoints[20]).prop->spriteID = -2;
+	(*roadPoints[20]).prop->spriteXCoord = -10.0f + (*roadPoints[20]).curvefactor;
+	(*roadPoints[20]).prop->tex = roadSigns;
+	(*roadPoints[20]).prop->scalefactor = 2.0f;
+	(*roadPoints[25]).prop->spriteID = 1;
+	(*roadPoints[25]).prop->spriteXCoord = -1.5f + (*roadPoints[25]).curvefactor;
+	(*roadPoints[25]).prop->tex = roadSigns;
+	(*roadPoints[25]).prop->scalefactor = 4.0f;
+	(*roadPoints[500]).prop->spriteID = 2;
+	(*roadPoints[500]).prop->spriteXCoord = -1.5f + (*roadPoints[25]).curvefactor;
+	(*roadPoints[500]).prop->tex = roadSigns;
+	(*roadPoints[500]).prop->scalefactor = 4.0f;
 	SDL_Rect *tree = new SDL_Rect({1204,4,283,296});
+	SDL_Rect *startSign = new SDL_Rect({ 332, 1, 315, 104 });
+	SDL_Rect *checkSign = new SDL_Rect({ 332, 107, 315, 104 });
+	SDL_Rect *goalSign = new SDL_Rect({ 332, 213, 315, 104 });
+	SDL_Rect *leftSign = new SDL_Rect({ 5, 3, 47, 43 });
+	SDL_Rect *rightSign = new SDL_Rect({ 60, 3, 47, 43 });
 	sprites.push_back(tree);
-	App->player->Enable();
-	camZPosition = 0;
-	roadLength = roadPoints.size();
+	sprites.push_back(startSign);
+	sprites.push_back(checkSign);
+	sprites.push_back(goalSign);
+	sprites.push_back(leftSign);
+	sprites.push_back(rightSign);
 	for (int j = 50; j < 300; ++j) {
 		if ((j % 20) == 0) {
 			(*roadPoints[j]).prop->spriteID = 0;
-			(*roadPoints[j]).prop->spriteXCoord = -2.0f+ (*roadPoints[j]).curvefactor;
+			(*roadPoints[j]).prop->spriteXCoord = -2.0f + (*roadPoints[j]).curvefactor;
 			(*roadPoints[j]).prop->collider= App->collision->AddCollider(*sprites[(*roadPoints[j]).prop->spriteID], WALL);
+			(*roadPoints[j]).prop->tex = roadDecorations ;
 		}
 	}
 	for (int j =720; j < 970; ++j) {
 		if ((j % 20) == 0 ) {
-			(*roadPoints[j]).prop->spriteID = 0;
-			(*roadPoints[j]).prop->spriteXCoord = -2.0f + (*roadPoints[j]).curvefactor;
+			(*roadPoints[j]).prop->spriteID = 4;
+			(*roadPoints[j]).prop->spriteXCoord = -4.0f + (*roadPoints[j]).curvefactor;
 			(*roadPoints[j]).prop->collider = App->collision->AddCollider(*sprites[(*roadPoints[j]).prop->spriteID], WALL);
+			(*roadPoints[j]).prop->tex = roadSigns;
 		}
 	}
 	App->enemies->addEnemy(*(App->enemies->greenEnemy), -roadWidth/2, 20);
@@ -92,14 +122,14 @@ bool ModuleRoad::Start() {
 				break;
 		}
 	}
-	endSegmentIndex = 150;
+
 	backgroundPosX = -128;
-	App->enemies->startRace();
 	runTimer = true;
 	runGameOverTimer = false;
 	timerAcum = 0;
-	raceSeconds = 50;
+	raceSeconds = 10;
 	gameOverCountdown = 10;
+	//App->player->Enable(); // deret dis
 	return true;
 }
 
@@ -110,10 +140,14 @@ update_status ModuleRoad::Update(float deltaTime) {
 	App->renderer->ScaledBlit(background, (int)backgroundPosX, 204, sky, sky->w * 2, sky->h * 2);
 	App->renderer->ScaledBlit(background, (int)foregroundPosX, 252, foreground, foreground->w * 2, foreground->h * 2);
 	camZPosition = calculatePosZ(App->player->getSpeed()*deltaTime*40);
-	int actualSeg = (((int)(camZPosition / segmentLength)) >= endSegmentIndex);
+	bool actualSeg = (((int)(camZPosition / segmentLength)) >= endSegmentIndex);
+	if (semaphore.Finished()) {
+		App->enemies->startRace();
+		runTimer = true;
+	}
 	if ( actualSeg && !crossedEndSegment ){
 		crossedEndSegment = true;
-		setUpEnding();
+		setUpEnding(false);
 		runGameOverTimer = true;
 	}
 	paintRoad(deltaTime);
@@ -122,6 +156,10 @@ update_status ModuleRoad::Update(float deltaTime) {
 		if (timerAcum > 1.0f) {
 			timerAcum = 0.0f;
 			if (raceSeconds > 0) --raceSeconds;
+			else if (raceSeconds <= 0 && !crossedEndSegment) {
+				setUpEnding(true);
+				runGameOverTimer = true;
+			}
 			if (runGameOverTimer) {				
 				if (gameOverCountdown > 0) --gameOverCountdown;
 				else {
@@ -137,7 +175,7 @@ update_status ModuleRoad::Update(float deltaTime) {
 
 bool ModuleRoad::CleanUp() {
 	App->textures->Unload(background);
-	App->textures->Unload(roadAssets);
+	App->textures->Unload(roadDecorations);
 	App->player->Disable();
 	for (int i = 0; i < (int)enemies.size(); ++i) RELEASE (enemies[i]);
 	enemies.clear();
@@ -151,11 +189,11 @@ bool ModuleRoad::CleanUp() {
 	sky = nullptr;
 	background = nullptr;
 	foreground = nullptr;
-	roadAssets = nullptr;
+	roadDecorations = nullptr;
 	delete sky;
 	delete background;
 	delete foreground;
-	delete roadAssets;
+	delete roadDecorations;
 	return true;
 }
 
@@ -166,6 +204,11 @@ void ModuleRoad::resetRoad() {
 	offsetX = 0;
 	roadX = 0;
 	App->enemies->enemies[0]->setPos(-roadWidth/2, 20);
+	runTimer = false;
+	runGameOverTimer = false;
+	timerAcum = 0.0f;
+	raceSeconds = 50;
+	gameOverCountdown = 10;
 }
 
 
@@ -175,6 +218,7 @@ void ModuleRoad::paintRoad(float deltaTime) {
 	float ymax = SCREEN_HEIGHT;
 	int initPos = (int)(camZPosition / segmentLength);
 	roadPoint* rp = roadPoints[initPos];
+	if (rp->prop->spriteID == 2) raceSeconds += 30;
 	backgroundPosX += rp->curvefactor / 16;
 	foregroundPosX += rp->curvefactor/4;
 	camHeight = (int)(1500 + rp->worldY);
@@ -245,20 +289,24 @@ void ModuleRoad::drawSprites(int initPos) {
 	for (int j = initPos + (int)drawDistance; j > initPos; --j) {
 		roadPoint *roadP = roadPoints[j % roadLength];
 		if (roadP->prop->spriteID != -1) {
-			SDL_Rect sprite = *sprites[roadP->prop->spriteID];
+			SDL_Rect sprite;
+			if (roadP->prop->spriteID > -1) sprite = *sprites[roadP->prop->spriteID];
+			else if (roadP->prop->spriteID == -2) sprite = semaphore.GetCurrentFrame();
 			float spriteX = roadP->screenX + roadP->screenScale * roadP->prop->spriteXCoord * (SCREEN_WIDTH / 2);
 			float spriteY = roadP->screenY;
 			float spriteW = sprite.w * (roadP->screenW / segmentLength);
 			float spriteH = sprite.h * (roadP->screenW / segmentLength);
 			spriteX += spriteW * roadP->prop->spriteXCoord;
-			spriteY += spriteH * (-1);
+			spriteY += spriteH *roadP->prop->scalefactor * (-1);
 			float clipH = spriteY + spriteH - roadP->clipCoord;
 			if (clipH < 0) clipH = 0;
 			if (clipH >= spriteH) continue;
-			sprite.h = (int) (sprite.h - (sprite.h * clipH / spriteH));
-			App->renderer->ScaledBlit(roadAssets,(int)(spriteX- spriteW/2), (int)spriteY, &sprite , (int)spriteW, (int)spriteH);
-			roadP->prop->collider->setPos((int)(spriteX - spriteW / 2), (int)spriteY);
-			roadP->prop->collider->setWidthHeight((int)spriteW,(int)spriteH);
+			sprite.h = (int)(sprite.h - (sprite.h * clipH / spriteH));
+			App->renderer->ScaledBlit(roadP->prop->tex, (int)(spriteX - spriteW / 2), (int)spriteY, &sprite, (int)spriteW*roadP->prop->scalefactor, (int)spriteH*roadP->prop->scalefactor);
+			if (roadP->prop->collider != nullptr) {
+				roadP->prop->collider->setPos((int)(spriteX - spriteW / 2), (int)spriteY);
+				roadP->prop->collider->setWidthHeight((int)spriteW, (int)spriteH);
+			}
 		}
 	}
 	// Enemies
@@ -278,8 +326,7 @@ void ModuleRoad::drawSprites(int initPos) {
 			if (clipH >= spriteH) return;
 			e->setMoveAnim(roadP->curvefactor);
 			App->enemies->drawEnemy(spriteX, spriteY, spriteW, spriteH, e);
-			e->collider->setPos((int)spriteX, (int)spriteY);
-			e->collider->setWidthHeight((int)spriteW, (int)spriteH);
+			App->enemies->updateEnemyCollider(e, (int)spriteX, (int)spriteY, (int)spriteW, (int)spriteH);
 		}
 	}
 }
@@ -305,7 +352,7 @@ float ModuleRoad::calculatePosZ(float speed) {
 	realPosZ += (int)speed;
 	if (realPosZ > 200) {
 		int numSteps = (int)(realPosZ / segmentLength);
-		App->player->addScore(200*numSteps);
+		if (!runGameOverTimer)App->player->addScore(200*numSteps);
 		camZPosition += numSteps * 200;
 		realPosZ -= numSteps * 200;
 	}
@@ -313,7 +360,8 @@ float ModuleRoad::calculatePosZ(float speed) {
 }
 
 void ModuleRoad::checkCollisions(roadPoint *rp) {
-	if (rp->prop->spriteID > -1) {
+	assert(rp != nullptr);
+	if (rp->prop->spriteID > -1 && rp->prop->collider != nullptr) {
 		if (App->player->collider->checkCollisionCoordX(rp->prop->collider->rect)) {
 			App->player->setPlayerState(FALLING);
 		}
@@ -331,7 +379,7 @@ void ModuleRoad::checkCollisions(roadPoint *rp) {
 	}
 }
 
-void ModuleRoad::setUpEnding() {
+void ModuleRoad::setUpEnding(bool gameOVer) {
 	App->player->animateToIDLE();
 	for (int i = 0; i < App->enemies->enemies.size(); ++i) {
 		Enemy *e = App->enemies->enemies[i];
@@ -339,5 +387,6 @@ void ModuleRoad::setUpEnding() {
 			e->setEnabled(false);
 		}
 	}
-	App->gui->switchGUImodeToScore(true);
+	if (!gameOVer)	App->gui->switchGUImodeToScore(SCORES_MODE);
+	else App->gui->switchGUImodeToScore(GAME_OVER_MODE);
 }

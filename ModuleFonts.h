@@ -10,8 +10,6 @@
 
 enum fontName { COLOR_RED, COLOR_GREEN, COLOR_YELLOW, COLOR_WHITE, TIME_FONT, WHITE_LETTERS };
 
-
-
 struct Font {
 	char nums[10] = { '0','1','2','3','4','5','6','7','8','9' };
 	char letters[52] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
