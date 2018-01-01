@@ -17,12 +17,25 @@ bool ModuleEnemy::Start() {
 	greenEnemy = new Enemy(0, 0, true);
 	yellowEnemy = new Enemy(0, 0, false);
 	startRunning = false;
+	secondAcum = 0.0f;
 	return true;
 }
 
 update_status ModuleEnemy::Update(float deltaTime) {
 	if (startRunning) {
-		for (int i = 0; i < enemies.size(); ++i)	enemies[i]->Update(deltaTime);
+		secondAcum += deltaTime;
+		if (secondAcum > 1.0f) {
+			secondAcum = 0.0f;
+			if (turboSeconds > 0)--turboSeconds;			
+		}
+		for (int i = 0; i < enemies.size(); ++i) {
+			if (turboSeconds <= 0) enemies[i]->setSpeed(enemies[i]->normalSpeed);
+			if (enemies[i]->enemyPosZ > 500 && !enemies[i]->teleportedForward) {
+				enemies[i]->enemyPosZ += 300 * i;
+				enemies[i]->teleportedForward = true;
+			}
+			enemies[i]->Update(deltaTime);
+		}
 	}
 	return UPDATE_CONTINUE;
 }
@@ -47,7 +60,6 @@ void ModuleEnemy::drawEnemy(float x, float y, float scaleW, float scaleH, Enemy 
 	int middleX = (int)e->enemyPosX - ((int)e->current_animation->GetCurrentFrame().w / 2);
 	int middleY = 480 - ((int)e->current_animation->GetCurrentFrame().h * 2);
 	App->renderer->ScaledBlit(sprites, x, y, &(e->current_animation->GetCurrentFrame()), scaleW, scaleH);
-	//e->collider->SetPos(x, y);
 }
 
 void ModuleEnemy::addEnemy(Enemy &e, float x, float y) {
@@ -120,12 +132,14 @@ Enemy::Enemy(float x, float z, bool greenColor) {
 	enemyAnimState = E_IDLE;
 	enemyPosX = 0;
 	enemyPosZ = 0;
-	speed = 1.0f;
+	normalSpeed = 0.6f;
+	turboSpeed = 2.0f;
+	speed = turboSpeed;
 }
 
 Enemy::Enemy(const Enemy& p) : idle(p.idle), left(p.left), right(p.right), endLeft(p.endLeft), endRight(p.endRight),
-reverseLeft(p.reverseLeft), reverseRight(p.reverseRight), speed(p.speed), enemyAnimState(p.enemyAnimState),
-current_animation(p.current_animation) {}
+reverseLeft(p.reverseLeft), reverseRight(p.reverseRight), speed(p.speed), turboSpeed(p.turboSpeed), normalSpeed(p.normalSpeed),
+enemyAnimState(p.enemyAnimState),current_animation(p.current_animation) {}
 
 Enemy::~Enemy() {}
 
@@ -147,9 +161,6 @@ void Enemy::Update(float deltaTime) {
 			break;
 		}
 		current_animation = animArray[enemyAnimState];
-		if (enemyPosZ > 500) {
-			speed = 0.5f;
-		}
 	}
 }
 

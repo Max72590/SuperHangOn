@@ -32,7 +32,7 @@ update_status ModuleGUI::Update(float deltaTime) {
 				App->renderer->Blit(sprites, 50, 70, stage);
 				App->renderer->Blit(sprites, 10, 90, stageProgression);
 				App->renderer->Blit(sprites, 400, 50, speed);
-				App->fonts->drawMessage(COLOR_RED, to_string(playerScore), 120, 20); //
+				App->fonts->drawMessage(COLOR_RED, to_string(playerScore), 100, 20); //
 				App->fonts->drawMessage(COLOR_GREEN, to_string(playerScore), 465, 20);
 				App->fonts->drawMessage(COLOR_WHITE, to_string(playerSpeed), 475, 50);
 				App->fonts->drawMessage(COLOR_WHITE, std::to_string(stageNum), 145, 70);
@@ -40,16 +40,16 @@ update_status ModuleGUI::Update(float deltaTime) {
 				break;
 			case SCORES_MODE:
 				App->fonts->drawMessage(WHITE_LETTERS, "course", 150, 100);
-				App->fonts->drawMessage(WHITE_LETTERS, "clear", 200, 100);
+				App->fonts->drawMessage(WHITE_LETTERS, "clear", 250, 100);
 				App->fonts->drawMessage(WHITE_LETTERS, "final", 150, 150);
-				App->fonts->drawMessage(WHITE_LETTERS, "score", 200, 150);
+				App->fonts->drawMessage(WHITE_LETTERS, "score", 250, 150);
 				App->fonts->drawMessage(TIME_FONT, to_string(playerScore), 200, 200);
 				break;
 			case GAME_OVER_MODE:
 				App->fonts->drawMessage(WHITE_LETTERS, "game", 150, 100);
-				App->fonts->drawMessage(WHITE_LETTERS, "over", 200, 100);
+				App->fonts->drawMessage(WHITE_LETTERS, "over", 250, 100);
 				App->fonts->drawMessage(WHITE_LETTERS, "final", 150, 150);
-				App->fonts->drawMessage(WHITE_LETTERS, "score", 200, 150);
+				App->fonts->drawMessage(WHITE_LETTERS, "score", 250, 150);
 				App->fonts->drawMessage(TIME_FONT, to_string(playerScore), 200, 200);
 				break;
 	}

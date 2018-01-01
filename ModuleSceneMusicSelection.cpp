@@ -50,7 +50,7 @@ update_status ModuleSceneMusicSelection::Update(float deltaTime) {
 	App->renderer->Blit(musicMenu, 153, 394, &pressStartAnim.GetCurrentFrame());
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && App->fade->isFading() == false)
 	{
-		App->fade->FadeToBlack((Module*)App->road, this);
+		App->fade->FadeToBlack((Module*)App->asiaStage, this);
 		App->audio->LoadFx("GameFX/starting.wav");
 		App->startGameModules();
 	}

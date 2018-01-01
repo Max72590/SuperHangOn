@@ -8,6 +8,7 @@
 #include "Animation.h"
 #include <vector>
 
+
 enum enemyState { E_IDLE, E_LEANING_LEFT, E_LEANING_RIGHT, E_REVERSE_LEFT, E_REVERSE_RIGHT, E_END_LEFT, E_END_RIGHT };
 
 struct Enemy {
@@ -23,8 +24,9 @@ struct Enemy {
 	Animation reverseRight;
 	Animation *animArray[7] = { &idle,&left,&right, &reverseLeft, &reverseRight, &endLeft, &endRight };
 	float enemyPosZ, enemyPosX;
-	float speed;
+	float speed, normalSpeed, turboSpeed;
 	bool enabled = true;
+	bool teleportedForward = false;
 	Enemy(float x, float z, bool colorEnemy);
 	Enemy(const Enemy& p);
 	~Enemy();
@@ -61,6 +63,9 @@ public:
 
 private:
 	bool startRunning = true;	
+	int turboSeconds = 3;
+
+	float secondAcum;
 };
 
 #endif 

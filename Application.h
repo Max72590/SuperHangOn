@@ -23,6 +23,7 @@ class ModuleSceneMapSelection;
 class ModuleSceneMusicSelection;
 class ModuleSceneSpace;
 class ModuleRoad;
+class ModuleAsiaStage;
 class ModuleEnemy;
 class ModuleGUI;
 class ModuleFonts;
@@ -57,7 +58,7 @@ public:
 	ModuleSceneMapSelection* map_selec;
 	ModuleEnemy* enemies;
 	ModuleSceneSpace* scene_space;
-	ModuleRoad* road;
+	ModuleAsiaStage *asiaStage;
 	ModuleFonts* fonts;
 	ModuleGUI* gui;
 

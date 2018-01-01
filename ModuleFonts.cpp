@@ -16,10 +16,10 @@ ModuleFonts::~ModuleFonts()
 bool ModuleFonts::Start() {
 	texFont = App->textures->Load("rtype/miscellaneousMark2.png");
 	lettersFont = App->textures->Load("rtype/gameFont.png");
-	yellowFont = Font(571, 403 , 162, 18,10,true);
-	whiteFont = Font(571, 421, 162, 18,10, true);
-	redFont = Font(571, 439, 162, 18,10, true);
-	greenFont = Font(571, 457, 162, 18,10, true);
+	yellowFont = Font(569, 403 , 170, 17,10,true);
+	whiteFont = Font(569, 421, 170, 17,10, true);
+	redFont = Font(569, 439, 170, 17,10, true);
+	greenFont = Font(569, 457, 170, 17,10, true);
 	timeFont = Font(0,1500, 212, 30,10, true);
 	letters = Font(0,0,9,234,26,false);
 	return true;
@@ -69,7 +69,7 @@ void ModuleFonts::drawMessage(fontName fn, string message, int posX, int posY) {
 		vector<SDL_Rect*> rects;
 		f->getTextRects(message, rects);
 		for (int i = 0; i < (int)rects.size(); ++i) {
-			posX += rects[i]->w;
+			posX += rects[i]->w+5;
 			App->renderer->Blit(t, posX, posY, rects[i]);
 			delete rects[i];
 		}

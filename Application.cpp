@@ -9,6 +9,7 @@
 #include "ModuleParticles.h"
 #include "ModuleEnemy.h"
 #include "ModuleRoad.h"
+#include "ModuleAsiaStage.h"
 #include "ModuleFonts.h"
 #include "ModuleGUI.h"
 #include "ModuleSceneMapSelection.h"
@@ -35,7 +36,7 @@ Application::Application()
 	modules.push_back(music_selec = new ModuleSceneMusicSelection(false));
 	modules.push_back(scene_space = new ModuleSceneSpace(false));
 	modules.push_back(enemies = new ModuleEnemy(false));
-	modules.push_back(road = new ModuleRoad(false));
+	modules.push_back(asiaStage = new ModuleAsiaStage(false));
 	modules.push_back(player = new ModulePlayer(false));
 	modules.push_back(fonts = new ModuleFonts(true));
 	modules.push_back(gui = new ModuleGUI(false));
@@ -70,7 +71,7 @@ bool Application::Init()
 	// Start the first scene --
 	//fade->FadeToBlack(scene_intro, nullptr, 3.0f);
 	//fade->FadeToBlack(music_selec, nullptr, 3.0f);
-	fade->FadeToBlack(road, nullptr, 3.0f);
+	fade->FadeToBlack(asiaStage, nullptr, 3.0f);
 	startGameModules();
 	gameClock = clock();
 	return ret;
