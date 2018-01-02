@@ -20,7 +20,6 @@ struct roadProp {
 	int spriteID;
 	Collider *collider = nullptr;
 	SDL_Texture *tex = nullptr;
-	
 	roadProp() {
 		spriteXCoord = -1.0f;
 		spriteID = -1;
@@ -37,13 +36,20 @@ struct roadPoint {
 	}
 };
 
+struct colors {
+	SDL_Color sky;
+	SDL_Color roadDark;
+	SDL_Color roadLight;
+	SDL_Color offroadDark;
+	SDL_Color offroadLight;
+};
+
 class ModuleRoad :
 	public Module
 {
 public:
 	ModuleRoad(bool active = true);
 	~ModuleRoad();
-
 	bool Start();
 	update_status Update(float deltaTime);
 	bool CleanUp();
@@ -54,22 +60,22 @@ public:
 	void drawSprites(int initPos);
 	void smoothInOut(int previousPos, int startPos, float amount);
 	float calculatePosZ(float speed);
-	float cosinus(float rads);
 	void checkCollisions(roadPoint *rp);
 	void setUpEnding(bool gameOver);
-
+	bool calculateColorTransition(SDL_Color &c1, SDL_Color &c2);
 
 public:
 	Animation semaphore;
-	SDL_Rect* sky;
-	SDL_Rect* foreground;
+	vector<SDL_Rect*> sky;
+	vector<SDL_Rect*> foreground;
 	SDL_Texture* background = nullptr;
 	SDL_Texture* roadDecorations = nullptr;
 	SDL_Texture* roadSigns = nullptr;
 	std::vector<roadPoint*> roadPoints;
 	std::vector<SDL_Rect*> sprites;
 	std::vector<Enemy*> enemies;	// in order, the first is the farthest.
-
+	std::vector<colors> stageColors;	
+	std::vector<int> stageColorChangeIndexes;
 	// Background
 	float backgroundPosX = 0;
 	float foregroundPosX = 0;
@@ -82,6 +88,7 @@ public:
 	float roadY = 0;
 	int roadLength =0;
 	int endSegmentIndex;
+	int colorIndex = 0;
 	bool crossedEndSegment = false;
 	//Camera projection vars
 	int camHeight = 1500;
@@ -93,6 +100,7 @@ public:
 	float roadX = 0;
 	// Other variables
 	bool runTimer, runGameOverTimer;
+	bool startColorTransition = false;
 	float timerAcum;
 	int raceSeconds, gameOverCountdown;
 };

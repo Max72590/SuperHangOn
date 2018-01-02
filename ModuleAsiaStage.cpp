@@ -21,6 +21,9 @@ ModuleAsiaStage::~ModuleAsiaStage()
 
 bool ModuleAsiaStage::Start() {
 	camZPosition = 0;
+	stageColorChangeIndexes.push_back(300);
+	stageColorChangeIndexes.push_back(1500);
+	stageColorChangeIndexes.push_back(2000);
 	roadLength = roadPoints.size();
 	for (float i = 0; i < 5000; ++i) {
 		roadPoint *rp = new roadPoint();
@@ -32,10 +35,13 @@ bool ModuleAsiaStage::Start() {
 		// Hills
 		if (i > 0) {
 			if (i >= 720 && i <= 970) {
-				if (i == 721) smoothInOut(719, 720, abs(cosinus(720) - cosinus(719)));
-				rp->worldY = cosinus(i);
+				if (i == 721) {
+					float cos1 = cos(720.0f / 30.0f) * 1000.0f;
+					float cos2 = cos(719.0f / 30.0f) * 1000.0f;
+					smoothInOut(719, 720, abs( abs(cos1) - abs(cos2) ));
+				}
+				rp->worldY = cos(i / 30.0f) * 1000.0f;
 			}
-
 			else rp->worldY = (*roadPoints[i - 1]).worldY;
 		}
 		else rp->worldY = 0;
@@ -43,10 +49,13 @@ bool ModuleAsiaStage::Start() {
 
 	}
 	roadLength = roadPoints.size();
-	camDepth = 0.84f; // Horizon looks better with this value
-					  //camDepth = 0.58 
-	sky = new SDL_Rect({ 8,67,512 ,36 });
-	foreground = new SDL_Rect({ 534,63,319,12 });
+	camDepth = 0.84f; // Horizon looks better with this value rather than this -> camDepth = 0.58 
+	sky.push_back (new SDL_Rect({ 8,67,512 ,36 }));
+	sky.push_back(new SDL_Rect({ 871,141,512 ,36 }));
+	sky.push_back(new SDL_Rect({ 871,251,512 ,36 }));
+	foreground.push_back(new SDL_Rect({ 534,63,319,12 }));
+	foreground.push_back(new SDL_Rect({ 530,170,319,12 }));
+	foreground.push_back(new SDL_Rect({ 530,210,319,12 }));
 	background = App->textures->Load("rtype/backgrounds.png");
 	roadDecorations = App->textures->Load("rtype/sprites.png");
 	roadSigns = App->textures->Load("rtype/stuff.png");
@@ -139,6 +148,25 @@ bool ModuleAsiaStage::Start() {
 	timerAcum = 0;
 	raceSeconds = 60;
 	gameOverCountdown = 10;
+	stageColors.push_back(colors());
+	stageColors[0].sky = SDL_Color({128,224,224,255});
+	stageColors[0].roadDark = SDL_Color({ 62,62,62,255 });
+	stageColors[0].roadLight = SDL_Color({ 100,100,100,255 });
+	stageColors[0].offroadDark = SDL_Color({ 0,150,0,255 });
+	stageColors[0].offroadLight = SDL_Color({ 0,200,0,255 });
+	stageColors.push_back(colors());
+	stageColors[1].sky = SDL_Color({ 128,32,224,255 });
+	stageColors[1].roadDark = SDL_Color({ 96,64,64,255 });
+	stageColors[1].roadLight = SDL_Color({ 128,128,128,255 });
+	stageColors[1].offroadDark = SDL_Color({ 224,160,32,255 });
+	stageColors[1].offroadLight = SDL_Color({ 224,192,64,255 });
+	stageColors.push_back(colors());
+	stageColors[2].sky = SDL_Color({ 224,96,0,255 });
+	stageColors[2].roadDark = SDL_Color({ 128,96,0,255 });
+	stageColors[2].roadLight = SDL_Color({ 160,96,64,255 });
+	stageColors[2].offroadDark = SDL_Color({ 160,128,32,255 });
+	stageColors[2].offroadLight = SDL_Color({ 192,160,64,255 });
+
 	//App->player->Enable(); // deret dis
 	return true;
 }

@@ -20,18 +20,31 @@ ModuleRoad::~ModuleRoad()
 
 
 bool ModuleRoad::Start() {
-	
 	return true;
 }
 
 
 update_status ModuleRoad::Update(float deltaTime) {
-
-	App->renderer->DrawQuad(SDL_Rect({0,0,640,480}), 128,224,224,255);
-	App->renderer->ScaledBlit(background, (int)backgroundPosX, 204, sky, sky->w * 2, sky->h * 2);
-	App->renderer->ScaledBlit(background, (int)foregroundPosX, 252, foreground, foreground->w * 2, foreground->h * 2);
+	SDL_Color c = stageColors[colorIndex].sky;
+	App->renderer->DrawQuad(SDL_Rect({0,0,640,480}), c.r,c.g,c.b,c.a);
+	App->renderer->ScaledBlit(background, (int)backgroundPosX, 204, sky[colorIndex], sky[colorIndex]->w * 2, sky[colorIndex]->h * 2);
+	App->renderer->ScaledBlit(background, (int)foregroundPosX, 252, foreground[colorIndex], foreground[colorIndex]->w * 2, foreground[colorIndex]->h * 2);
 	camZPosition = calculatePosZ(App->player->getSpeed()*deltaTime*40);
 	bool actualSeg = (((int)(camZPosition / segmentLength)) >= endSegmentIndex);
+	if (stageColorChangeIndexes[colorIndex] <  (int)(camZPosition / segmentLength)) {
+		if (colorIndex < stageColorChangeIndexes.size()-1) startColorTransition = true;		
+	}
+	if (startColorTransition) {
+		bool color1Ok = calculateColorTransition(stageColors[colorIndex].sky, stageColors[colorIndex+1].sky);
+		bool color2Ok = calculateColorTransition(stageColors[colorIndex].roadDark, stageColors[colorIndex + 1].roadDark);
+		bool color3Ok = calculateColorTransition(stageColors[colorIndex].roadLight, stageColors[colorIndex + 1].roadLight);
+		bool color4Ok = calculateColorTransition(stageColors[colorIndex].offroadDark, stageColors[colorIndex + 1].offroadDark);
+		bool color5Ok = calculateColorTransition(stageColors[colorIndex].offroadLight, stageColors[colorIndex + 1].offroadLight);
+		if (color1Ok && color2Ok && color3Ok && color4Ok && color5Ok) {
+			++colorIndex;
+			startColorTransition = false;
+		}
+	}
 	if (semaphore.Finished()) {
 		App->enemies->startRace();
 		runTimer = true;
@@ -78,14 +91,19 @@ bool ModuleRoad::CleanUp() {
 		RELEASE(roadPoints[i]);
 	}
 	roadPoints.clear();
-	sky = nullptr;
-	background = nullptr;
-	foreground = nullptr;
-	roadDecorations = nullptr;
-	delete sky;
-	delete background;
-	delete foreground;
+	for (int i = 0; i < sky.size(); ++i) {
+		sky[i] = nullptr;
+
+		foreground[i] = nullptr;
+		roadDecorations = nullptr;
+		delete sky[i];
+
+		delete foreground[i];
+
+	}
 	delete roadDecorations;
+	background = nullptr;
+	delete background;
 	return true;
 }
 
@@ -101,6 +119,9 @@ void ModuleRoad::resetRoad() {
 	timerAcum = 0.0f;
 	raceSeconds = 50;
 	gameOverCountdown = 10;
+	colorIndex = 0;
+	crossedEndSegment = false;
+	startColorTransition = false;
 }
 
 
@@ -160,13 +181,13 @@ void ModuleRoad::drawTrack(roadPoint const *p1, roadPoint const *p2, bool const 
 	Sint16 y[4] = { y1,y2,y2,y1 };
 	SDL_Color roadColor, offRoadColor, rumbleColor;
 	if (isColor1) {
-		roadColor = ROAD_LIGHT;
-		offRoadColor = GREEN_DARK;
+		roadColor = stageColors[colorIndex].roadLight; // ROAD_LIGHT;
+		offRoadColor = stageColors[colorIndex].offroadDark; // GREEN_DARK;
 		rumbleColor = WHITE;
 	}
 	else {
-		roadColor = ROAD_DARK;
-		offRoadColor = GREEN_LIGHT;
+		roadColor = stageColors[colorIndex].roadDark; //ROAD_DARK;
+		offRoadColor = stageColors[colorIndex].offroadLight; //GREEN_LIGHT;
 		rumbleColor = RED;
 	}
 	filledPolygonRGBA(App->renderer->renderer, greenX, y, 4, offRoadColor.r, offRoadColor.g, offRoadColor.b, offRoadColor.a);
@@ -235,11 +256,6 @@ void ModuleRoad::smoothInOut(int previouspPos, int actualPos, float amount) {
 	}
 }
 
-float ModuleRoad::cosinus(float rads) {
-	return cos(rads / 30) * 1000;
-}
-
-
 float ModuleRoad::calculatePosZ(float speed) {
 	realPosZ += (int)speed;
 	if (realPosZ > 200) {
@@ -260,7 +276,7 @@ void ModuleRoad::checkCollisions(roadPoint *rp) {
 	}
 	for (int k = 0; k < (int)App->enemies->enemies.size(); ++k) {
 		Enemy *e = App->enemies->enemies[k];
-		if (e->getPosZ()-6 == (rp->worldZ/ segmentLength) && e->enemyEnabled()) {
+		if (e->getPosZ()-6 <= (rp->worldZ/ segmentLength) && e->getPosZ() > (rp->worldZ / segmentLength) && e->enemyEnabled()) {
 			roadPoint *roadP = roadPoints[((int)e->getPosZ()) % roadLength];
 			if (App->player->collider->checkCollisionCoordX(e->collider->rect)) {
 				if (App->player->getSpeed() > App->player->getMinSpeed()) {
@@ -281,4 +297,52 @@ void ModuleRoad::setUpEnding(bool gameOVer) {
 	}
 	if (!gameOVer)	App->gui->switchGUImodeToScore(SCORES_MODE);
 	else App->gui->switchGUImodeToScore(GAME_OVER_MODE);
+}
+
+bool ModuleRoad::calculateColorTransition(SDL_Color &c1, SDL_Color &c2)
+{
+	for (int i = 0; i < 3; ++i) {
+		Uint8 color, targetColor;
+		switch (i) {
+			case 0:
+				color = c1.r;
+				targetColor = c2.r;
+				break;
+			case 1:
+				color = c1.g;
+				targetColor = c2.g;
+				break;
+			case 2:
+				color = c1.b;
+				targetColor = c2.b;
+				break;
+		}
+		if (color != targetColor) {
+			int diff = abs(color - targetColor);
+			if (diff > 10) {
+				if (color < targetColor) {
+					color += 10;
+				}
+				if (color > targetColor) {
+					color -= 10;
+				}
+			}
+			else color = targetColor;
+		}
+		switch (i) {
+			case 0:
+				c1.r = color;
+				break;
+			case 1:
+				c1.g = color;
+				break;
+			case 2:
+				c1.b = color;
+				break;
+		}
+	}
+	if (c2.r == c1.r && c2.g == c1.g && c2.b == c1.b) {
+		return true;
+	}
+	return false;
 }
