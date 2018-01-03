@@ -14,14 +14,12 @@ class ModuleInput;
 class ModuleAudio;
 class ModuleFadeToBlack;
 class ModuleCollision;
-class ModuleParticles;
 
 // Game modules ---
 class ModulePlayer;
 class ModuleSceneIntro;
 class ModuleSceneMapSelection;
 class ModuleSceneMusicSelection;
-class ModuleSceneSpace;
 class ModuleRoad;
 class ModuleAsiaStage;
 class ModuleEnemy;
@@ -38,8 +36,6 @@ public:
 	bool Init();
 	update_status Update();
 	bool CleanUp();
-	void startGameModules();
-	void stopGameModules();
 
 public:
 	ModuleRender* renderer;
@@ -49,7 +45,6 @@ public:
 	ModuleAudio* audio;
 	ModuleFadeToBlack* fade;
 	ModuleCollision* collision;
-	ModuleParticles* particles;
 
 	// Game modules ---
 	ModulePlayer* player;
@@ -57,7 +52,6 @@ public:
 	ModuleSceneMusicSelection* music_selec;
 	ModuleSceneMapSelection* map_selec;
 	ModuleEnemy* enemies;
-	ModuleSceneSpace* scene_space;
 	ModuleAsiaStage *asiaStage;
 	ModuleFonts* fonts;
 	ModuleGUI* gui;

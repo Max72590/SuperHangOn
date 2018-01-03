@@ -25,8 +25,8 @@ public:
 	void setSpeed(float value);
 	float getValueX() const;
 	float getMinSpeed()const;
-	float getScore() const;
-	void addScore(float value);
+	int getScore() const;
+	void addScore(int value);
 	void offsetX(float value);
 	state getPlayerState()const;
 	void setPlayerState(state playerState);
@@ -47,7 +47,7 @@ public:
 	Animation reverseLeft;
 	Animation reverseRight;
 	Animation falling;
-	Animation *animArray[8] = {&idle,&left,&right, &reverseLeft, &reverseRight, &endLeft, &endRight, &falling};
+	Animation *animArray[8] = { &idle,&left,&right, &reverseLeft, &reverseRight, &endLeft, &endRight, &falling };
 	iPoint position;
 	Collider *collider = nullptr;
 	state playerState;
@@ -68,7 +68,7 @@ private:
 	float offRoadDecel = -maxspeed / 20.0f;
 	float offRoadLimit = maxspeed / 4.0f;
 	float maxPlayerX = 4000;
-	float score;
+	int score;
 };
 
 #endif

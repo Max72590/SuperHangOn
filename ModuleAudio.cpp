@@ -119,6 +119,11 @@ bool ModuleAudio::PlayMusic(const char* path, float fade_time)
 	return ret;
 }
 
+bool ModuleAudio::StopMusic() {
+	Mix_HaltMusic();
+	return true;
+}
+
 // Load WAV
 unsigned int ModuleAudio::LoadFx(const char* path)
 {

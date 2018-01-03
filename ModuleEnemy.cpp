@@ -28,7 +28,7 @@ update_status ModuleEnemy::Update(float deltaTime) {
 			secondAcum = 0.0f;
 			if (turboSeconds > 0)--turboSeconds;			
 		}
-		for (int i = 0; i < enemies.size(); ++i) {
+		for (int i = 0; i < (int)enemies.size(); ++i) {
 			if (turboSeconds <= 0) enemies[i]->setSpeed(enemies[i]->normalSpeed);
 			if (enemies[i]->enemyPosZ > 500 && !enemies[i]->teleportedForward) {
 				enemies[i]->enemyPosZ += 300 * i;
@@ -42,7 +42,7 @@ update_status ModuleEnemy::Update(float deltaTime) {
 
 bool ModuleEnemy::CleanUp() {
 	App->textures->Unload(sprites);
-	for (int i = 0; i < enemies.size(); ++i) {
+	for (int i = 0; i < (int)enemies.size(); ++i) {
 		RELEASE(enemies[i]);
 	}
 	enemies.clear();
@@ -57,9 +57,10 @@ void ModuleEnemy::startRace() {
 }
 
 void ModuleEnemy::drawEnemy(float x, float y, float scaleW, float scaleH, Enemy *e) {
+	assert(e != nullptr);
 	int middleX = (int)e->enemyPosX - ((int)e->current_animation->GetCurrentFrame().w / 2);
 	int middleY = 480 - ((int)e->current_animation->GetCurrentFrame().h * 2);
-	App->renderer->ScaledBlit(sprites, x, y, &(e->current_animation->GetCurrentFrame()), scaleW, scaleH);
+	App->renderer->ScaledBlit(sprites, (int)x, (int)y, &(e->current_animation->GetCurrentFrame()), (int)scaleW, (int)scaleH);
 }
 
 void ModuleEnemy::addEnemy(Enemy &e, float x, float y) {
@@ -69,6 +70,7 @@ void ModuleEnemy::addEnemy(Enemy &e, float x, float y) {
 }
 
 void ModuleEnemy::updateEnemyCollider(Enemy *e, int posx, int posy, int width, int height) {
+	assert(e != nullptr);
 	e->collider->setPos(posx,posy);
 	e->collider->setWidthHeight(width,height);
 }

@@ -2,7 +2,6 @@
 #include "Application.h"
 #include "ModuleTextures.h"
 #include "ModuleInput.h"
-#include "ModuleParticles.h"
 #include "ModuleRender.h"
 #include "ModuleFadeToBlack.h"
 #include "ModuleAudio.h"
@@ -79,11 +78,6 @@ ModulePlayer::ModulePlayer(bool active) : Module(active)
 	falling.loop = false;
 	falling.speed = 0.1f;
 
-	playerStopped = new SDL_Rect({ 180, 558, 67, 147 });
-
-	playerState = IDLE;
-	playerX = 0;
-
 
 }
 
@@ -96,6 +90,9 @@ bool ModulePlayer::Start()
 	LOG("Loading player");
 	graphics = App->textures->Load("rtype/miscellaneous.png");
 	falling_anim = App->textures->Load("rtype/falls.png");
+	playerStopped = new SDL_Rect({ 180, 558, 67, 147 });
+	playerState = IDLE;
+	playerX = 0;
 	destroyed = false;
 	position.x = 320;
 	position.y = 409;
@@ -114,6 +111,8 @@ bool ModulePlayer::CleanUp()
 	LOG("Unloading player");
 	App->textures->Unload(graphics);
 	App->textures->Unload(falling_anim);
+	delete playerStopped;
+	playerStopped = nullptr;
 	return true;
 }
 
@@ -190,15 +189,11 @@ update_status ModulePlayer::Update(float deltaTime)
 				playerX -= deltaTime * 2000 * (speed / maxspeed);
 				if (playerX < -maxPlayerX ) playerX = -maxPlayerX ;
 			}
-			if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT && playerState != IDLE && speed > 0) {
+			else if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT && playerState != IDLE && speed > 0) {
 				playerX += deltaTime * 2000 * (speed / maxspeed);
 				if (playerX > maxPlayerX ) playerX = maxPlayerX ;
 			}
 		}
-
-		/*if (playerX > 1 || playerX < -1) {
-			if (speed > offRoadLimit) speed -= offRoadDecel;
-		}*/
 		current_animation = animArray[playerState];
 	}
 	if (reachedEndLine) {
@@ -228,17 +223,21 @@ update_status ModulePlayer::Update(float deltaTime)
 			scaleFactor = 1.0f;
 		}
 		if (!startRunning || speed <= 0) {
-			int middleX = position.x - ((playerStopped->w*scaleFactor) / 2);
-			int middleY = SCREEN_HEIGHT - (playerStopped->h)*scaleFactor;
-			actualTex = graphics;
 			scaleFactor = 1.0f;
-			App->renderer->ScaledBlit(actualTex, middleX, middleY, playerStopped, playerStopped->w*scaleFactor, playerStopped->h*scaleFactor);
+			int scaledW = (int)(playerStopped->w*scaleFactor);
+			int scaledH = (int)(playerStopped->h*scaleFactor);
+			int middleX = position.x - (scaledW / 2);
+			int middleY = SCREEN_HEIGHT - scaledH;
+			actualTex = graphics;
+			App->renderer->ScaledBlit(actualTex, middleX, middleY, playerStopped,scaledW, scaledH);
 			collider->setPos(middleX, middleY);
 		}
 		else {
-			int middleX = position.x - ((current_animation->GetCurrentFrame().w*scaleFactor) / 2);
-			int middleY = SCREEN_HEIGHT - (current_animation->GetCurrentFrame().h)*scaleFactor;
-			App->renderer->ScaledBlit(actualTex, middleX, middleY, &(current_animation->GetCurrentFrame()), (current_animation->GetCurrentFrame()).w*scaleFactor, (current_animation->GetCurrentFrame()).h*scaleFactor);
+			int scaledW = (int)(current_animation->GetCurrentFrame().w*scaleFactor);
+			int scaledH = (int)(current_animation->GetCurrentFrame().h*scaleFactor);
+			int middleX = position.x - (scaledW/ 2);
+			int middleY = SCREEN_HEIGHT - scaledH;
+			App->renderer->ScaledBlit(actualTex, middleX, middleY, &(current_animation->GetCurrentFrame()), scaledW, scaledH);
 			collider->setPos(middleX, middleY);
 		}
 	}
@@ -293,11 +292,11 @@ void ModulePlayer::animateToIDLE() {
 	reachedEndLine = true;
 }
 
-float  ModulePlayer::getScore() const{
+int  ModulePlayer::getScore() const{
 	return score;
 }
 
-void ModulePlayer::addScore(float value) {
+void ModulePlayer::addScore(int value) {
 	score += value;
 }
 

@@ -6,7 +6,6 @@
 #include "ModuleAudio.h"
 #include "ModuleFadeToBlack.h"
 #include "ModuleCollision.h"
-#include "ModuleParticles.h"
 #include "ModuleEnemy.h"
 #include "ModuleRoad.h"
 #include "ModuleAsiaStage.h"
@@ -15,7 +14,6 @@
 #include "ModuleSceneMapSelection.h"
 #include "ModuleSceneMusicSelection.h"
 #include "ModuleSceneIntro.h"
-#include "ModuleSceneSpace.h"
 #include "ModulePlayer.h"
 
 using namespace std;
@@ -34,7 +32,6 @@ Application::Application()
 	modules.push_back(scene_intro = new ModuleSceneIntro(false));
 	modules.push_back(map_selec = new ModuleSceneMapSelection(false));
 	modules.push_back(music_selec = new ModuleSceneMusicSelection(false));
-	modules.push_back(scene_space = new ModuleSceneSpace(false));
 	modules.push_back(enemies = new ModuleEnemy(false));
 	modules.push_back(asiaStage = new ModuleAsiaStage(false));
 	modules.push_back(player = new ModulePlayer(false));
@@ -43,7 +40,6 @@ Application::Application()
 
 	// Modules to draw on top of game logic
 	modules.push_back(collision = new ModuleCollision());
-	modules.push_back(particles = new ModuleParticles());
 	modules.push_back(fade = new ModuleFadeToBlack());
 
 	
@@ -69,10 +65,8 @@ bool Application::Init()
 	}
 
 	// Start the first scene --
-	//fade->FadeToBlack(scene_intro, nullptr, 3.0f);
-	//fade->FadeToBlack(music_selec, nullptr, 3.0f);
-	fade->FadeToBlack(asiaStage, nullptr, 3.0f);
-	startGameModules();
+	fade->FadeToBlack(scene_intro, nullptr, 3.0f);
+	//fade->FadeToBlack(asiaStage, nullptr, 3.0f);
 	gameClock = clock();
 	return ret;
 }
@@ -109,16 +103,3 @@ bool Application::CleanUp()
 	return ret;
 }
 
-void Application::startGameModules() {
-	gui->Enable();
-	gui->switchGUImodeToScore(GAME_MODE);
-	enemies->Enable();
-	player->Enable();
-}
-
-void Application::stopGameModules() {
-	player->activatePlayer(false);
-	gui->Disable();
-	enemies->Disable();
-	player->Disable();
-}

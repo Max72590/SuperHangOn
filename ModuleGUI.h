@@ -22,18 +22,18 @@ public:
 public:
 	// Sprites & Textures
 	SDL_Texture *sprites;
-	SDL_Rect *top = new SDL_Rect({ 32,436,63,27 });
+	SDL_Rect *top;
 	SDL_Rect *topCounter ;
-	SDL_Rect *time = new SDL_Rect({ 96,436,77,27 });
+	SDL_Rect *time;
 	SDL_Rect *timeCounter;
-	SDL_Rect *score = new SDL_Rect({ 176,436,99,27 });
+	SDL_Rect *score;
 	SDL_Rect *scoreCounter;
-	SDL_Rect *speed = new SDL_Rect({ 274,440,83,19 });
+	SDL_Rect *speed;
 	SDL_Rect *speedCounter;
 	SDL_Rect *stageProgression;
-	SDL_Rect *course = new SDL_Rect({ 408,420,99,19 });
+	SDL_Rect *course;
 	SDL_Rect *courseName;
-	SDL_Rect *stage = new SDL_Rect({ 274,420,83,19 });
+	SDL_Rect *stage;
 	SDL_Rect *stageNumber;
 	// Map variables
 	int current_stage;

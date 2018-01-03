@@ -27,8 +27,6 @@ class ModuleFonts :
 	public Module
 {
 public:
-	SDL_Texture *texFont = nullptr;
-	SDL_Texture *lettersFont = nullptr;
 	ModuleFonts(bool active);
 	~ModuleFonts();
 	bool Start();
@@ -37,6 +35,8 @@ public:
 	void drawMessage(fontName fn, std::string message,int posX ,int posY);
 
 public:
+	SDL_Texture *texFont = nullptr;
+	SDL_Texture *lettersFont = nullptr;
 	Font yellowFont;
 	Font whiteFont;
 	Font redFont;

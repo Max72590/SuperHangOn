@@ -11,26 +11,7 @@
 // Reference at https://www.youtube.com/watch?v=OEhmUuehGOA
 
 ModuleSceneIntro::ModuleSceneIntro(bool active) : Module(active)
-{}
-
-ModuleSceneIntro::~ModuleSceneIntro()
-{}
-
-// Load assets
-bool ModuleSceneIntro::Start()
 {
-	LOG("Loading space intro");
-	background = App->textures->Load("rtype/blackBackground.png");
-	introSegaLogoSprites = App->textures->Load("rtype/segaLogo.bmp");
-	segaLogoSprites = App->textures->Load("rtype/segaLogoMenuOne.bmp");
-	superHangOnSprites = App->textures->Load("rtype/superHangOnLogo.bmp");
-	menuOptions = App->textures->Load("rtype/menuOneOptions.bmp");
-	//App->audio->PlayMusic("rtype/intro.ogg", 1.0f);
-	if (fx == 0)
-		fx = App->audio->LoadFx("rtype/starting.wav");
-	App->renderer->camera.x = App->renderer->camera.y = 0;
-	hasSegaLogoFinished = false;
-	
 	int spriteY = 39;
 	int offset = 185;
 	for (int i = 0; i < 6; ++i) {
@@ -74,7 +55,27 @@ bool ModuleSceneIntro::Start()
 	}
 	segaLogo.loop = true;
 	segaLogo.speed = 0.2f;
-	
+}
+
+ModuleSceneIntro::~ModuleSceneIntro()
+{}
+
+// Load assets
+bool ModuleSceneIntro::Start()
+{
+	LOG("Loading space intro");
+	background = App->textures->Load("rtype/blackBackground.png");
+	introSegaLogoSprites = App->textures->Load("rtype/segaLogo.bmp");
+	segaLogoSprites = App->textures->Load("rtype/segaLogoMenuOne.bmp");
+	superHangOnSprites = App->textures->Load("rtype/superHangOnLogo.bmp");
+	menuOptions = App->textures->Load("rtype/menuOneOptions.bmp");
+	if (fx == 0) fx = App->audio->LoadFx("rtype/starting.wav");
+	App->renderer->camera.x = App->renderer->camera.y = 0;
+	hasSegaLogoFinished = false;
+	introSuperHangOnLogo.Reset();
+	superHangOnLogo.Reset();
+	introSegaLogo.Reset();
+	segaLogo.Reset();
 	menuOptionsRect = new SDL_Rect();
 	menuOptionsRect->x = 257;
 	menuOptionsRect->y = 1;
@@ -102,6 +103,12 @@ bool ModuleSceneIntro::Start()
 bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading space scene");
+
+	delete logoRect;
+	delete menuOptionsRect;
+	delete menuOptionsGameType;
+	delete menuCursor;
+
 
 	App->textures->Unload(background);
 	App->textures->Unload(introSegaLogoSprites);
@@ -145,9 +152,8 @@ update_status ModuleSceneIntro::Update(float deltaTime)
 	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && App->fade->isFading() == false)
 	{
 		if (firstOptionIsSelected && !newGameSelected)	newGameSelected = true;
-		else App->fade->FadeToBlack((Module*)App->map_selec, this);
-		
-		//App->audio->PlayFx(fx);
+		else App->fade->FadeToBlack((Module*)App->map_selec, this);		
+		App->audio->PlayFx(fx);
 	}
 
 	return UPDATE_CONTINUE;

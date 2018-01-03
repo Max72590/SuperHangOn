@@ -52,11 +52,12 @@ update_status ModuleSceneMusicSelection::Update(float deltaTime) {
 	{
 		App->fade->FadeToBlack((Module*)App->asiaStage, this);
 		App->audio->LoadFx("GameFX/starting.wav");
-		App->startGameModules();
 	}
 	return UPDATE_CONTINUE;
 }
 
 bool ModuleSceneMusicSelection::CleanUp() {
+	App->textures->Unload(background);
+	App->textures->Unload(musicMenu);
 	return true;
 }

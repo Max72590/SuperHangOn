@@ -39,14 +39,6 @@ update_status ModuleCollision::PreUpdate(float deltaTime)
 update_status ModuleCollision::Update(float deltaTime)
 {
 	list<Collider*>::iterator it, it2;
-	/*for (it = colliders.begin(); it != colliders.end(); ++it) {
-		for (it2 = it; it2 != colliders.end(); ++it2) {			
-			if ((it != it2) && (*it)->checkCollision((*it2)->rect) && CollisionMatrix[(*it)->colliderType][(*it2)->colliderType]) {
-				App->renderer->DrawQuad((*it)->rect, 255, 0, 0, 80);
-			}
-		}
-		App->renderer->DrawQuad((*it)->rect, 0, 0, 255, 80);
-	}*/
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) debug = !debug;
 	//if(debug == true) DebugDraw();
 	return UPDATE_CONTINUE;

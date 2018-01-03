@@ -6,6 +6,7 @@
 #include "ModulePlayer.h"
 #include "ModuleGUI.h"
 #include "ModuleFadeToBlack.h"
+#include "ModuleAudio.h"
 
 using namespace std;
 
@@ -32,7 +33,7 @@ update_status ModuleRoad::Update(float deltaTime) {
 	camZPosition = calculatePosZ(App->player->getSpeed()*deltaTime*40);
 	bool actualSeg = (((int)(camZPosition / segmentLength)) >= endSegmentIndex);
 	if (stageColorChangeIndexes[colorIndex] <  (int)(camZPosition / segmentLength)) {
-		if (colorIndex < stageColorChangeIndexes.size()-1) startColorTransition = true;		
+		if (colorIndex < (int)stageColorChangeIndexes.size()-1) startColorTransition = true;		
 	}
 	if (startColorTransition) {
 		bool color1Ok = calculateColorTransition(stageColors[colorIndex].sky, stageColors[colorIndex+1].sky);
@@ -56,6 +57,7 @@ update_status ModuleRoad::Update(float deltaTime) {
 		runGameOverTimer = true;
 	}
 	paintRoad(deltaTime);
+	App->gui->updateGUIValues(raceSeconds, App->player->getScore(), (int)App->player->getSpeed());
 	if (runTimer) {
 		timerAcum += deltaTime;
 		if (timerAcum > 1.0f) {
@@ -68,12 +70,12 @@ update_status ModuleRoad::Update(float deltaTime) {
 			if (runGameOverTimer) {				
 				if (gameOverCountdown > 0) --gameOverCountdown;
 				else {
+					App->audio->StopMusic();
 					App->fade->FadeToBlack((Module*)App->scene_intro, this);
-					App->stopGameModules();
 				}
 			}
 		}
-		App->gui->updateGUIValues(raceSeconds, App->player->getScore(), App->player->getSpeed() );
+
 	}
 	return UPDATE_CONTINUE;
 }
@@ -91,19 +93,18 @@ bool ModuleRoad::CleanUp() {
 		RELEASE(roadPoints[i]);
 	}
 	roadPoints.clear();
-	for (int i = 0; i < sky.size(); ++i) {
-		sky[i] = nullptr;
-
-		foreground[i] = nullptr;
-		roadDecorations = nullptr;
-		delete sky[i];
-
-		delete foreground[i];
-
+	for (int i = 0; i < (int)sky.size(); ++i) {
+		RELEASE (sky[i]);
+		RELEASE (foreground[i]);
 	}
-	delete roadDecorations;
+	roadDecorations = nullptr;
 	background = nullptr;
-	delete background;
+	sky.clear();
+	foreground.clear();
+	App->player->Disable();
+	App->enemies->Disable();
+	App->collision->Disable();
+	App->gui->Disable();
 	return true;
 }
 
@@ -165,10 +166,10 @@ void ModuleRoad::projection(roadPoint &rp, bool looped) {
 	rp.screenW = (rp.screenScale*roadWidth * (SCREEN_WIDTH / 2) );
 }
 
-void ModuleRoad::drawTrack(roadPoint const *p1, roadPoint const *p2, bool const isColor1) {
+void ModuleRoad::drawTrack(roadPoint const *p1, roadPoint const *p2, bool const isColor1) const {
 	assert(p1 != nullptr);
 	assert(p2 != nullptr);
-	Sint16 p1x = (Sint16)p1->screenX;
+	Sint16 p1x = (Sint16)(p1->screenX);
 	Sint16 p1w = (Sint16)p1->screenW;
 	Sint16 p2x = (Sint16)p2->screenX;
 	Sint16 p2w = (Sint16)p2->screenW;
@@ -289,7 +290,7 @@ void ModuleRoad::checkCollisions(roadPoint *rp) {
 
 void ModuleRoad::setUpEnding(bool gameOVer) {
 	App->player->animateToIDLE();
-	for (int i = 0; i < App->enemies->enemies.size(); ++i) {
+	for (int i = 0; i < (int)App->enemies->enemies.size(); ++i) {
 		Enemy *e = App->enemies->enemies[i];
 		if ((e->getPosZ() < (int)(camZPosition / segmentLength)) && (e->getPosZ() > (int)(camZPosition / segmentLength) + drawDistance)) {
 			e->setEnabled(false);

@@ -12,6 +12,12 @@
 
 ModuleAsiaStage::ModuleAsiaStage(bool active) : ModuleRoad(active)
 {
+	semaphore.frames.push_back({ 339, 421, 31, 73 });
+	semaphore.frames.push_back({ 370, 421, 31, 73 });
+	semaphore.frames.push_back({ 401, 421, 31, 73 });
+	semaphore.frames.push_back({ 432, 421, 31, 73 });
+	semaphore.loop = false;
+	semaphore.speed = 0.016f;
 }
 
 
@@ -20,12 +26,26 @@ ModuleAsiaStage::~ModuleAsiaStage()
 }
 
 bool ModuleAsiaStage::Start() {
+	// Enabling modules
+	App->fonts->Enable();
+	App->gui->Enable();
+	App->gui->switchGUImodeToScore(GAME_MODE);
+	App->enemies->Enable();
+	App->player->Enable();
+	App->collision->Enable();
+	//Loading assets
+	background = App->textures->Load("rtype/backgrounds.png");
+	roadDecorations = App->textures->Load("rtype/sprites.png");
+	roadSigns = App->textures->Load("rtype/stuff.png");
+	// Initiating stage
 	camZPosition = 0;
+	endSegmentIndex = 100;
 	stageColorChangeIndexes.push_back(300);
 	stageColorChangeIndexes.push_back(1500);
 	stageColorChangeIndexes.push_back(2000);
+	semaphore.Reset();
 	roadLength = roadPoints.size();
-	for (float i = 0; i < 5000; ++i) {
+	for (int i = 0; i < 5000; ++i) {
 		roadPoint *rp = new roadPoint();
 		rp->worldZ = i*segmentLength;
 		// Curves
@@ -46,26 +66,17 @@ bool ModuleAsiaStage::Start() {
 		}
 		else rp->worldY = 0;
 		roadPoints.push_back(rp);
-
 	}
 	roadLength = roadPoints.size();
-	camDepth = 0.84f; // Horizon looks better with this value rather than this -> camDepth = 0.58 
+	camDepth = 0.84f; // Horizon looks better with this value rather than this one-> camDepth = 0.58 
 	sky.push_back (new SDL_Rect({ 8,67,512 ,36 }));
 	sky.push_back(new SDL_Rect({ 871,141,512 ,36 }));
 	sky.push_back(new SDL_Rect({ 871,251,512 ,36 }));
 	foreground.push_back(new SDL_Rect({ 534,63,319,12 }));
 	foreground.push_back(new SDL_Rect({ 530,170,319,12 }));
 	foreground.push_back(new SDL_Rect({ 530,210,319,12 }));
-	background = App->textures->Load("rtype/backgrounds.png");
-	roadDecorations = App->textures->Load("rtype/sprites.png");
-	roadSigns = App->textures->Load("rtype/stuff.png");
-	semaphore.frames.push_back({ 339, 421, 31, 73 });
-	semaphore.frames.push_back({ 370, 421, 31, 73 });
-	semaphore.frames.push_back({ 401, 421, 31, 73 });
-	semaphore.frames.push_back({ 432, 421, 31, 73 });
-	semaphore.loop = false;
-	semaphore.speed = 0.016f;
-	endSegmentIndex = 4000;
+
+
 	(*roadPoints[endSegmentIndex]).prop->spriteID = 3;
 	(*roadPoints[endSegmentIndex]).prop->spriteXCoord = -1.5f + (*roadPoints[25]).curvefactor;
 	(*roadPoints[endSegmentIndex]).prop->tex = roadSigns;
@@ -144,10 +155,12 @@ bool ModuleAsiaStage::Start() {
 		App->enemies->enemies[i]->collider = App->collision->AddCollider(App->enemies->enemies[i]->current_animation->GetCurrentFrame(), ENEMY);
 	}
 	backgroundPosX = -128;
+	runTimer = false;
 	runGameOverTimer = false;
-	timerAcum = 0;
+	timerAcum = 0.0f;
 	raceSeconds = 60;
 	gameOverCountdown = 10;
+	colorIndex = 0;
 	stageColors.push_back(colors());
 	stageColors[0].sky = SDL_Color({128,224,224,255});
 	stageColors[0].roadDark = SDL_Color({ 62,62,62,255 });
@@ -166,8 +179,6 @@ bool ModuleAsiaStage::Start() {
 	stageColors[2].roadLight = SDL_Color({ 160,96,64,255 });
 	stageColors[2].offroadDark = SDL_Color({ 160,128,32,255 });
 	stageColors[2].offroadLight = SDL_Color({ 192,160,64,255 });
-
-	//App->player->Enable(); // deret dis
 	return true;
 }
 

@@ -22,6 +22,12 @@ bool ModuleSceneMapSelection::Start() {
 	LOG("Loading space intro");
 	background = App->textures->Load("rtype/mapSelectionBackground.png");
 	mapPieces = App->textures->Load("rtype/miscellaneous.png");
+	beginnerSprite = new SDL_Rect({ 283,5 ,129,33 });
+	juniorSprite = new SDL_Rect({ 283, 41 ,143,33 });
+	seniorSprite = new SDL_Rect({ 429, 5 ,143,33 });
+	expertSprite = new SDL_Rect({ 429, 41 ,143,33 });
+	mapSelectionTitle = new SDL_Rect({ 5,5,273,17 });
+
 	pressStartTitle.frames.push_back({ 5,27,273,17 });
 	pressStartTitle.frames.push_back({ 0,1250,273,17 });
 	pressStartTitle.speed = 0.05f;
@@ -98,8 +104,6 @@ update_status ModuleSceneMapSelection::Update(float deltaTime) {
 }
 
 bool ModuleSceneMapSelection::CleanUp() {
-	App->textures->Unload(background);
-	App->textures->Unload(mapPieces);
 	delete beginnerSprite;
 	delete juniorSprite;
 	delete seniorSprite;
@@ -110,5 +114,8 @@ bool ModuleSceneMapSelection::CleanUp() {
 	seniorSprite = nullptr;
 	expertSprite = nullptr;
 	mapSelectionTitle = nullptr;
+	currentAnimation = nullptr;
+	App->textures->Unload(background);
+	App->textures->Unload(mapPieces);
 	return true;
 }

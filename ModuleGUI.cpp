@@ -16,7 +16,14 @@ ModuleGUI::~ModuleGUI()
 bool ModuleGUI::Start() {
 	sprites = App->textures->Load("rtype/miscellaneous.png");
 	// Load default map values
-	setMapSpecificValues("asia");	
+	setMapSpecificValues("asia");
+	top = new SDL_Rect({ 32,436,63,27 });
+	time = new SDL_Rect({ 96,436,77,27 });
+	score = new SDL_Rect({ 176,436,99,27 });
+	speed = new SDL_Rect({ 274,440,83,19 });
+	course = new SDL_Rect({ 408,420,99,19 });
+	stage = new SDL_Rect({ 274,420,83,19 });
+
 	actualMode = GAME_MODE;
 	return true;
 }
@@ -57,6 +64,7 @@ update_status ModuleGUI::Update(float deltaTime) {
 }
 
 bool ModuleGUI::CleanUp() {
+
 	delete top;
 	delete time;
 	delete score;
@@ -65,6 +73,14 @@ bool ModuleGUI::CleanUp() {
 	delete stage;
 	delete stageProgression;
 	delete speed;
+	top = nullptr;
+	time = nullptr;
+	score = nullptr;
+	course = nullptr;
+	courseName = nullptr;
+	stage = nullptr;
+	stageProgression = nullptr;
+	speed = nullptr;
 	return true;
 }
 

@@ -56,7 +56,7 @@ public:
 	void resetRoad();
 	void paintRoad(float deltaTime);
 	void projection(roadPoint &rp, bool looped);
-	void drawTrack(roadPoint const *p1, roadPoint const *p2, bool const isColor1);
+	void drawTrack(roadPoint const *p1, roadPoint const *p2, bool const isColor1) const;
 	void drawSprites(int initPos);
 	void smoothInOut(int previousPos, int startPos, float amount);
 	float calculatePosZ(float speed);
