@@ -211,9 +211,7 @@ update_status ModulePlayer::Update(float deltaTime)
 		}
 	}
 	// Draw everything --------------------------------------
-	if (destroyed == false) {
-		
-		//App->renderer->Blit(graphics, middleX, middleY, &(current_animation->GetCurrentFrame()));
+	if (destroyed == false) {		
 		if (playerState == FALLING) {
 			actualTex = falling_anim;
 			scaleFactor = 2.0f;

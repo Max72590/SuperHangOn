@@ -65,8 +65,8 @@ bool Application::Init()
 	}
 
 	// Start the first scene --
-	fade->FadeToBlack(scene_intro, nullptr, 3.0f);
-	//fade->FadeToBlack(asiaStage, nullptr, 3.0f);
+	//fade->FadeToBlack(scene_intro, nullptr, 3.0f);
+	fade->FadeToBlack(asiaStage, nullptr, 3.0f);
 	gameClock = clock();
 	return ret;
 }

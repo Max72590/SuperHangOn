@@ -22,11 +22,6 @@ bool ModuleSceneMapSelection::Start() {
 	LOG("Loading space intro");
 	background = App->textures->Load("rtype/mapSelectionBackground.png");
 	mapPieces = App->textures->Load("rtype/miscellaneous.png");
-	beginnerSprite = new SDL_Rect({ 283,5 ,129,33 });
-	juniorSprite = new SDL_Rect({ 283, 41 ,143,33 });
-	seniorSprite = new SDL_Rect({ 429, 5 ,143,33 });
-	expertSprite = new SDL_Rect({ 429, 41 ,143,33 });
-	mapSelectionTitle = new SDL_Rect({ 5,5,273,17 });
 
 	pressStartTitle.frames.push_back({ 5,27,273,17 });
 	pressStartTitle.frames.push_back({ 0,1250,273,17 });
@@ -51,6 +46,22 @@ bool ModuleSceneMapSelection::Start() {
 	asiaSprite.loop = false;
 
 	currentAnimation = &africaSprite;
+
+	beginnerSprite = new SDL_Rect({ 283,5 ,129,33 });
+	juniorSprite = new SDL_Rect({ 283, 41 ,143,33 });
+	seniorSprite = new SDL_Rect({ 429, 5 ,143,33 });
+	expertSprite = new SDL_Rect({ 429, 41 ,143,33 });
+	mapSelectionTitle = new SDL_Rect({ 5,5,273,17 });
+	classSprites.push_back(beginnerSprite);
+	classSprites.push_back(juniorSprite);
+	classSprites.push_back(seniorSprite);
+	classSprites.push_back(expertSprite);
+
+	animVector.push_back(&africaSprite);
+	animVector.push_back(&asiaSprite);
+	animVector.push_back(&americaSprite);
+	animVector.push_back(&europeSprite);
+
 	fxLoadId = App->audio->LoadFx("GameFX/starting.wav");
 	App->audio->PlayMusic("GameMusic/1SelectYourClass.ogg");
 	return true;
@@ -79,7 +90,7 @@ update_status ModuleSceneMapSelection::Update(float deltaTime) {
 		prevMapRegionId = mapRegionId;	
 	}
 	for (int i = 0; i < 4; ++i) {
-		if (i != mapRegionId) App->renderer->Blit(mapPieces, xyRegionCoords[i * 2] + widthPadding, xyRegionCoords[i * 2 + 1] + heightPadding, &animArray[i]->frames[0]);
+		if (i != mapRegionId) App->renderer->Blit(mapPieces, xyRegionCoords[i * 2] + widthPadding, xyRegionCoords[i * 2 + 1] + heightPadding, &animVector[i]->frames[0]);
 		else App->renderer->Blit(mapPieces, xyRegionCoords[mapRegionId * 2] + widthPadding, xyRegionCoords[mapRegionId * 2 + 1] + heightPadding, &currentAnimation->GetCurrentFrame());
 		App->renderer->Blit(mapPieces, xySpriteCoords[i * 2] + widthPadding, xySpriteCoords[i * 2 + 1] + heightPadding, classSprites[i]);
 	}
@@ -114,6 +125,8 @@ bool ModuleSceneMapSelection::CleanUp() {
 	seniorSprite = nullptr;
 	expertSprite = nullptr;
 	mapSelectionTitle = nullptr;
+	animVector.clear();
+	classSprites.clear();
 	currentAnimation = nullptr;
 	App->textures->Unload(background);
 	App->textures->Unload(mapPieces);

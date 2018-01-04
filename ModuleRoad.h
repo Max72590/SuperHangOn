@@ -82,7 +82,7 @@ public:
 	float landscapeY = 0;
 	//Road
 	float roadWidth = 2000;
-	float segmentLength = 200;
+	int segmentLength = 200;
 	float rumbleLength = 3;
 	float segmentsToDraw = 300;
 	float roadY = 0;

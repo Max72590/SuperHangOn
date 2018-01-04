@@ -101,6 +101,7 @@ bool ModuleRoad::CleanUp() {
 	background = nullptr;
 	sky.clear();
 	foreground.clear();
+	resetRoad();
 	App->player->Disable();
 	App->enemies->Disable();
 	App->collision->Disable();
@@ -114,7 +115,6 @@ void ModuleRoad::resetRoad() {
 	foregroundPosX = 0;
 	offsetX = 0;
 	roadX = 0;
-	App->enemies->enemies[0]->setPos(-roadWidth/2, 20);
 	runTimer = false;
 	runGameOverTimer = false;
 	timerAcum = 0.0f;
@@ -127,7 +127,7 @@ void ModuleRoad::resetRoad() {
 
 
 void ModuleRoad::paintRoad(float deltaTime) {
-	while (camZPosition >= roadLength*200) camZPosition -= roadLength*segmentLength;
+	while (camZPosition >= roadLength*segmentLength) camZPosition -= roadLength*segmentLength;
 	while (camZPosition < 0) camZPosition += roadLength*segmentLength;
 	float ymax = SCREEN_HEIGHT;
 	int initPos = (int)(camZPosition / segmentLength);
@@ -175,10 +175,12 @@ void ModuleRoad::drawTrack(roadPoint const *p1, roadPoint const *p2, bool const 
 	Sint16 p2w = (Sint16)p2->screenW;
 	Sint16 y1 = (Sint16)p1->screenY;
 	Sint16 y2 = (Sint16)p2->screenY;
+	Sint16 rumbleWidth1 = (Sint16) (p1w*0.10f);
+	Sint16 rumbleWidth2 = (Sint16) (p2w*0.10f);
 	Sint16 roadX[4] = {p1x-p1w, p2x-p2w, p2x+p2w, p1x + p1w };
 	Sint16 greenX[4] = { 0, 0,SCREEN_WIDTH,SCREEN_WIDTH };
-	Sint16 leftRumbleX[4] = {p1x-p1w,p2x-p2w,p2x - p2w -p2w*0.05f,p1x-p1w -p1w*0.05f };
-	Sint16 rightRumbleX[4] = {p1x+p1w,p2x+p2w,p2x+p2w+p2w*0.05f,p1x+p1w+p1w*0.05f };
+	Sint16 leftRumbleX[4] = {p1x-p1w,p2x-p2w,p2x - p2w - rumbleWidth2,p1x-p1w - rumbleWidth1 };
+	Sint16 rightRumbleX[4] = {p1x+p1w,p2x+p2w,p2x+p2w+ rumbleWidth2,p1x+p1w+ rumbleWidth1 };
 	Sint16 y[4] = { y1,y2,y2,y1 };
 	SDL_Color roadColor, offRoadColor, rumbleColor;
 	if (isColor1) {
@@ -216,7 +218,7 @@ void ModuleRoad::drawSprites(int initPos) {
 			if (clipH < 0) clipH = 0;
 			if (clipH >= spriteH) continue;
 			sprite.h = (int)(sprite.h - (sprite.h * clipH / spriteH));
-			App->renderer->ScaledBlit(roadP->prop->tex, (int)(spriteX - spriteW / 2), (int)spriteY, &sprite, (int)spriteW*roadP->prop->scalefactor, (int)spriteH*roadP->prop->scalefactor);
+			App->renderer->ScaledBlit(roadP->prop->tex, (int)(spriteX - spriteW / 2), (int)spriteY, &sprite, (int)(spriteW*roadP->prop->scalefactor), (int)(spriteH*roadP->prop->scalefactor));
 			if (roadP->prop->collider != nullptr) {
 				roadP->prop->collider->setPos((int)(spriteX - spriteW / 2), (int)spriteY);
 				roadP->prop->collider->setWidthHeight((int)spriteW, (int)spriteH);
@@ -233,7 +235,6 @@ void ModuleRoad::drawSprites(int initPos) {
 			float spriteY = roadP->screenY + 4;
 			float spriteW = sprite->w * (roadP->screenW / 266);
 			float spriteH = sprite->h * (roadP->screenW / 266);
-			//spriteX += spriteW *  e->enemyPosX;
 			spriteY += spriteH * (-1);
 			float clipH = spriteY + spriteH - roadP->clipCoord;
 			if (clipH < 0) clipH = 0;
@@ -249,7 +250,7 @@ void ModuleRoad::smoothInOut(int previouspPos, int actualPos, float amount) {
 	float actualHeight = (*roadPoints[actualPos]).worldY;
 	float previousHeight = (*roadPoints[previouspPos]).worldY;
 	float acumulator = previousHeight + amount;
-	int steps = (int)ceil((actualHeight - previousHeight) / amount);
+	int steps = abs( (int)ceil( (actualHeight - previousHeight) / amount) );
 	for (int i = actualPos - steps; i < actualPos; ++i) {
 		(*roadPoints[i]).worldY = acumulator;
 		if (actualHeight > previousHeight) acumulator += amount;
@@ -261,9 +262,9 @@ float ModuleRoad::calculatePosZ(float speed) {
 	realPosZ += (int)speed;
 	if (realPosZ > 200) {
 		int numSteps = (int)(realPosZ / segmentLength);
-		if (!runGameOverTimer)App->player->addScore(200*numSteps);
-		camZPosition += numSteps * 200;
-		realPosZ -= numSteps * 200;
+		if (!runGameOverTimer)App->player->addScore(segmentLength*numSteps);
+		camZPosition += numSteps * segmentLength;
+		realPosZ -= numSteps * segmentLength;
 	}
 	return camZPosition;
 }

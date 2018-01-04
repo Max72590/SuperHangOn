@@ -15,6 +15,7 @@ bool CollisionMatrix[6][6] = { { false,true,false,true,false,false },
 
 ModuleCollision::ModuleCollision()
 {
+	debug = false;
 }
 
 ModuleCollision::~ModuleCollision()
@@ -38,9 +39,8 @@ update_status ModuleCollision::PreUpdate(float deltaTime)
 
 update_status ModuleCollision::Update(float deltaTime)
 {
-	list<Collider*>::iterator it, it2;
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) debug = !debug;
-	//if(debug == true) DebugDraw();
+	if(debug == true) DebugDraw();
 	return UPDATE_CONTINUE;
 }
 
@@ -75,11 +75,7 @@ bool Collider::checkCollisionCoordX(SDL_Rect& r) const
 	int minX2 = r.x;
 	int maxX1 = this->rect.x + this->rect.w;
 	int maxX2 = r.x + r.w;
-	/*if (!(maxX1 < minX2 || minX1 > maxX2)) {
-		App->renderer->DrawQuad(r, 255, 0, 0, 80);
-	}*/
 	return !(maxX1 < minX2 || minX1 > maxX2);
-
 }
 
 bool Collider::checkCollision(const SDL_Rect& r) const
