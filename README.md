@@ -5,11 +5,11 @@ featuring a tribute of Super Hang On, released 1987 for arcade and consoles.
 
 ## Project information
 
-Full project at github: 
+Full project at github: https://github.com/Max72590/SuperHangOn
 
 Project webpage: 
 
-Latest release (1.0): 
+Latest release (1.0): https://github.com/Max72590/SuperHangOn/releases/tag/1.0
 
 Author: Maximino Puncernau
 
