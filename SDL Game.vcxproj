@@ -44,7 +44,7 @@
     <LibraryPath>$(SolutionDir)SDL\libx86;$(SolutionDir)SDL_image\libx86;$(SolutionDir)SDL_mixer\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)SDL\libx86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
