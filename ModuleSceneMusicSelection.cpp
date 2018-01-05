@@ -20,11 +20,11 @@ bool ModuleSceneMusicSelection::Start() {
 	background = App->textures->Load("sprites/MusicMenuBackground.png");
 	musicMenu = App->textures->Load("sprites/musicMenu.png");
 	selectedOptionAnim.frames.push_back({0,335,565,50});
-	selectedOptionAnim.frames.push_back({0,335,5,5}); // Small size to be out of sight
+	selectedOptionAnim.frames.push_back({0,335,5,5}); 
 	selectedOptionAnim.speed = 0.05f;
 	selectedOptionAnim.loop = true;
 	pressStartAnim.frames.push_back({ 0,335,565,50 });
-	pressStartAnim.frames.push_back({ 0,335,5,5 }); // Small size to be out of sight
+	pressStartAnim.frames.push_back({ 0,335,5,5 }); 
 	pressStartAnim.speed = 0.05f;
 	pressStartAnim.loop = true;
 	optionSelectedIndex = 0;

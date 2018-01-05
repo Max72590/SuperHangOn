@@ -177,13 +177,13 @@ void ModuleRoad::drawTrack(roadPoint const *p1, roadPoint const *p2, bool const 
 	Sint16 y[4] = { y1,y2,y2,y1 };
 	SDL_Color roadColor, offRoadColor, rumbleColor;
 	if (isColor1) {
-		roadColor = stageColors[colorIndex].roadLight; // ROAD_LIGHT;
-		offRoadColor = stageColors[colorIndex].offroadDark; // GREEN_DARK;
+		roadColor = stageColors[colorIndex].roadLight; 
+		offRoadColor = stageColors[colorIndex].offroadDark; 
 		rumbleColor = WHITE;
 	}
 	else {
-		roadColor = stageColors[colorIndex].roadDark; //ROAD_DARK;
-		offRoadColor = stageColors[colorIndex].offroadLight; //GREEN_LIGHT;
+		roadColor = stageColors[colorIndex].roadDark; 
+		offRoadColor = stageColors[colorIndex].offroadLight; 
 		rumbleColor = RED;
 	}
 	filledPolygonRGBA(App->renderer->renderer, greenX, y, 4, offRoadColor.r, offRoadColor.g, offRoadColor.b, offRoadColor.a);
