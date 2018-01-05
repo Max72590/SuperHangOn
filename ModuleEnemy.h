@@ -63,7 +63,7 @@ public:
 
 private:
 	bool startRunning = true;	
-	int turboSeconds = 3;
+	int turboSeconds;
 
 	float secondAcum;
 };

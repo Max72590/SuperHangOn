@@ -11,7 +11,6 @@ class ModuleSceneMapSelection :
 {
 
 public: 
-	SDL_Texture* background = nullptr;
 	SDL_Texture* mapPieces = nullptr;
 	Animation pressStartTitle;
 	Animation africaSprite;

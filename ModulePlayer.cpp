@@ -24,7 +24,7 @@ ModulePlayer::ModulePlayer(bool active) : Module(active)
 	right.frames.push_back({ 698, 736, 93, 127 }); // 686, 1230, 93, 127
 	right.frames.push_back({ 596, 736, 93, 127 }); // 584, 1230, 93, 127
 	right.loop = false;
-	right.speed = 0.5f;
+	right.speed = 0.1f;
 
 	// Reverse right
 	reverseRight.frames.push_back({ 596, 736, 93, 127 }); // 686, 1230, 93, 127
@@ -32,7 +32,7 @@ ModulePlayer::ModulePlayer(bool active) : Module(active)
 	reverseRight.frames.push_back({ 794, 720, 73, 137 }); // 858, 1214, 73, 137
 	reverseRight.frames.push_back({ 870, 720, 73, 137 }); // 782, 1214, 73, 137
 	reverseRight.loop = false;
-	reverseRight.speed = 0.5f;
+	reverseRight.speed = 0.1f;
 
 	// End right
 	endRight.frames.push_back({ 462, 752, 127, 111 }); // 688,914,127,111 
@@ -46,7 +46,7 @@ ModulePlayer::ModulePlayer(bool active) : Module(active)
 	left.frames.push_back({ 486, 578, 93, 127 }); // 486,898, 93,127
 	left.frames.push_back({ 588, 578, 93, 127 }); // 588,898, 93,127
 	left.loop = false;
-	left.speed = 0.5f;
+	left.speed = 0.1f;
 
 	// Reverse left
 	reverseLeft.frames.push_back({ 486, 578, 93, 127 }); // 486,898, 93,127
@@ -54,7 +54,7 @@ ModulePlayer::ModulePlayer(bool active) : Module(active)
 	reverseLeft.frames.push_back({ 334, 562, 73, 137 });  // 336,888, 73,137
 	reverseLeft.frames.push_back({ 410, 562, 73, 137 }); // 410,888, 73,137
 	reverseLeft.loop = false;
-	reverseLeft.speed = 0.5f;
+	reverseLeft.speed = 0.1f;
 
 	// End left
 	endLeft.frames.push_back({ 688, 594, 127, 111 }); // 688,914,127,111 
@@ -88,8 +88,8 @@ ModulePlayer::~ModulePlayer()
 bool ModulePlayer::Start()
 {
 	LOG("Loading player");
-	graphics = App->textures->Load("rtype/miscellaneous.png");
-	falling_anim = App->textures->Load("rtype/falls.png");
+	graphics = App->textures->Load("sprites/miscellaneous.png");
+	falling_anim = App->textures->Load("sprites/falls.png");
 	playerStopped = new SDL_Rect({ 180, 558, 67, 147 });
 	playerState = IDLE;
 	playerX = 0;

@@ -19,7 +19,6 @@ public:
 
 public:
 	bool hasSegaLogoFinished,firstOptionIsSelected,newGameSelected;
-	SDL_Texture* background = nullptr;
 	SDL_Texture* segaLogoSprites = nullptr;
 	SDL_Texture* introSegaLogoSprites = nullptr;
 	SDL_Texture* superHangOnSprites = nullptr;

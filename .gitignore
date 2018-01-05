@@ -58,3 +58,6 @@ Debug/SDL Game.log
 *.ilk
 Debug/SDL Game - Master 3 Handout.exe
 /.vs/SDL Game/v15/Browse.VC.opendb
+/Release/SDL Game - Master 3 Handout.iobj
+/Release/SDL Game - Master 3 Handout.ipdb
+*.dll

@@ -20,8 +20,7 @@ ModuleSceneMapSelection::~ModuleSceneMapSelection()
 
 bool ModuleSceneMapSelection::Start() {
 	LOG("Loading space intro");
-	background = App->textures->Load("rtype/mapSelectionBackground.png");
-	mapPieces = App->textures->Load("rtype/miscellaneous.png");
+	mapPieces = App->textures->Load("sprites/miscellaneous.png");
 
 	pressStartTitle.frames.push_back({ 5,27,273,17 });
 	pressStartTitle.frames.push_back({ 0,1250,273,17 });
@@ -68,7 +67,7 @@ bool ModuleSceneMapSelection::Start() {
 }
 
 update_status ModuleSceneMapSelection::Update(float deltaTime) {
-	App->renderer->Blit(background, 0, 0, &(SDL_Rect({ 0,0,640,480 })));
+	App->renderer->DrawQuad(SDL_Rect({ 0,0,SCREEN_WIDTH,SCREEN_HEIGHT }), 160,192,224,255  );
 	if (prevMapRegionId != mapRegionId) {
 		currentAnimation->loop = false;
 		switch (mapRegionId)
@@ -128,7 +127,6 @@ bool ModuleSceneMapSelection::CleanUp() {
 	animVector.clear();
 	classSprites.clear();
 	currentAnimation = nullptr;
-	App->textures->Unload(background);
 	App->textures->Unload(mapPieces);
 	return true;
 }

@@ -31,9 +31,9 @@ bool ModuleAsiaStage::Start() {
 	App->collision->Enable();
 
 	//Loading assets
-	background = App->textures->Load("rtype/backgrounds.png");
-	roadDecorations = App->textures->Load("rtype/sprites.png");
-	roadSigns = App->textures->Load("rtype/stuff.png");
+	background = App->textures->Load("sprites/backgrounds.png");
+	roadDecorations = App->textures->Load("sprites/sprites.png");
+	roadSigns = App->textures->Load("sprites/stuff.png");
 
 	stageColors.push_back(colors());
 	stageColors[0].sky = SDL_Color({ 128,224,224,255 });
@@ -276,7 +276,7 @@ bool ModuleAsiaStage::Start() {
 
 	// Set enemies
 	App->enemies->addEnemy(*(App->enemies->yellowEnemy), -roadWidth + (roadWidth / 4), 20);
-	App->enemies->addEnemy(*(App->enemies->greenEnemy), roadWidth - (roadWidth / 3), 20);
+	App->enemies->addEnemy(*(App->enemies->greenEnemy), roadWidth - (roadWidth / 2), 20);
 	App->enemies->addEnemy(*(App->enemies->yellowEnemy), -roadWidth / 2, 40);
 	App->enemies->addEnemy(*(App->enemies->greenEnemy), roadWidth / 2, 40);
 	App->enemies->addEnemy(*(App->enemies->yellowEnemy), 0, 60);

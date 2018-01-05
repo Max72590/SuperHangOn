@@ -14,7 +14,7 @@ ModuleGUI::~ModuleGUI()
 
 
 bool ModuleGUI::Start() {
-	sprites = App->textures->Load("rtype/miscellaneous.png");
+	sprites = App->textures->Load("sprites/miscellaneous.png");
 	// Load default map values
 	setMapSpecificValues("asia");
 	top = new SDL_Rect({ 32,436,63,27 });

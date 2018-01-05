@@ -64,12 +64,11 @@ ModuleSceneIntro::~ModuleSceneIntro()
 bool ModuleSceneIntro::Start()
 {
 	LOG("Loading space intro");
-	background = App->textures->Load("rtype/blackBackground.png");
-	introSegaLogoSprites = App->textures->Load("rtype/segaLogo.bmp");
-	segaLogoSprites = App->textures->Load("rtype/segaLogoMenuOne.bmp");
-	superHangOnSprites = App->textures->Load("rtype/superHangOnLogo.bmp");
-	menuOptions = App->textures->Load("rtype/menuOneOptions.bmp");
-	if (fx == 0) fx = App->audio->LoadFx("rtype/starting.wav");
+	introSegaLogoSprites = App->textures->Load("sprites/segaLogo.bmp");
+	segaLogoSprites = App->textures->Load("sprites/segaLogoMenuOne.bmp");
+	superHangOnSprites = App->textures->Load("sprites/superHangOnLogo.bmp");
+	menuOptions = App->textures->Load("sprites/menuOneOptions.bmp");
+	fx = App->audio->LoadFx("GameFX/starting.wav");
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 	hasSegaLogoFinished = false;
 	introSuperHangOnLogo.Reset();
@@ -109,8 +108,6 @@ bool ModuleSceneIntro::CleanUp()
 	delete menuOptionsGameType;
 	delete menuCursor;
 
-
-	App->textures->Unload(background);
 	App->textures->Unload(introSegaLogoSprites);
 	App->textures->Unload(segaLogoSprites);
 	App->textures->Unload(superHangOnSprites);
@@ -121,9 +118,8 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update(float deltaTime)
 {
-	App->renderer->Blit(background, 0, 0, NULL);
 
-
+	App->renderer->DrawQuad(SDL_Rect({ 0,0,SCREEN_WIDTH,SCREEN_HEIGHT }), 0, 0, 0, 255);
 	if (introSegaLogo.Finished()) {
 		if (introSuperHangOnLogo.Finished()) {
 			if (!newGameSelected) App->renderer->Blit(menuOptions, 250, 280, menuOptionsRect);

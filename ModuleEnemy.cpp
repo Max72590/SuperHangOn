@@ -13,11 +13,12 @@ ModuleEnemy::~ModuleEnemy()
 }
 
 bool ModuleEnemy::Start() {
-	sprites = App->textures->Load("rtype/miscellaneous.png");
+	sprites = App->textures->Load("sprites/miscellaneous.png");
 	greenEnemy = new Enemy(0, 0, true);
 	yellowEnemy = new Enemy(0, 0, false);
 	startRunning = false;
 	secondAcum = 0.0f;
+	turboSeconds = 3;
 	return true;
 }
 
@@ -89,52 +90,52 @@ void ModuleEnemy::updateEnemyCollider(Enemy *e, int posx, int posy, int width, i
 Enemy::Enemy(float x, float z, bool greenColor) {
 	enemyPosX = x;
 	enemyPosZ = z;
-	idle.frames.push_back({ 180, (greenColor ? 878 : 1038), 67, 147 });	// 180,878, 67,147
-	idle.frames.push_back({ 256, (greenColor ? 878 : 1038), 67, 147 }); // 256,878, 67,147
+	idle.frames.push_back({ 180, (greenColor ? 878 : 1038), 67, 147 });	
+	idle.frames.push_back({ 256, (greenColor ? 878 : 1038), 67, 147 }); 
 	idle.loop = true;
 	idle.speed = 0.5f;
 
 	// move right
-	right.frames.push_back({ 858, (greenColor ? 1214 : 1374), 73, 137 }); // 858, 1214, 73, 137
-	right.frames.push_back({ 782, (greenColor ? 1214 : 1374), 73, 137 }); // 782, 1214, 73, 137
-	right.frames.push_back({ 686, (greenColor ? 1230 : 1390), 93, 127 }); // 686, 1230, 93, 127
-	right.frames.push_back({ 584, (greenColor ? 1230 : 1390), 93, 127 }); // 584, 1230, 93, 127
+	right.frames.push_back({ 858, (greenColor ? 1214 : 1374), 73, 137 });
+	right.frames.push_back({ 782, (greenColor ? 1214 : 1374), 73, 137 }); 
+	right.frames.push_back({ 686, (greenColor ? 1230 : 1390), 93, 127 }); 
+	right.frames.push_back({ 584, (greenColor ? 1230 : 1390), 93, 127 }); 
 	right.loop = false;
-	right.speed = 0.5f;
+	right.speed = 0.1f;
 
 	// Reverse right
-	reverseRight.frames.push_back({ 686, (greenColor ? 1230 : 1390), 93, 127 }); // 686, 1230, 93, 127
-	reverseRight.frames.push_back({ 584, (greenColor ? 1230 : 1390), 93, 127 }); // 584, 1230, 93, 127
-	reverseRight.frames.push_back({ 858, (greenColor ? 1214 : 1374), 73, 137 }); // 858, 1214, 73, 137
-	reverseRight.frames.push_back({ 782, (greenColor ? 1214 : 1374), 73, 137 }); // 782, 1214, 73, 137
+	reverseRight.frames.push_back({ 686, (greenColor ? 1230 : 1390), 93, 127 }); 
+	reverseRight.frames.push_back({ 584, (greenColor ? 1230 : 1390), 93, 127 }); 
+	reverseRight.frames.push_back({ 858, (greenColor ? 1214 : 1374), 73, 137 });
+	reverseRight.frames.push_back({ 782, (greenColor ? 1214 : 1374), 73, 137 }); 
 	reverseRight.loop = false;
-	reverseRight.speed = 0.5f;
+	reverseRight.speed = 0.1f;
 
 	// End right
-	endRight.frames.push_back({ 450, (greenColor ? 1246 : 1406), 127, 111 }); // 688,914,127,111 
-	endRight.frames.push_back({ 320, (greenColor ? 1246 : 1406), 127, 111 }); // 818,914,127,111 
+	endRight.frames.push_back({ 450, (greenColor ? 1246 : 1406), 127, 111 });  
+	endRight.frames.push_back({ 320, (greenColor ? 1246 : 1406), 127, 111 }); 
 	endRight.loop = true;
 	endRight.speed = 0.5f;
 
 	// Move left
-	left.frames.push_back({ 334, (greenColor ? 888 : 1042), 73, 137 });  // 336,888, 73,137
-	left.frames.push_back({ 410, (greenColor ? 888 : 1042), 73, 137 }); // 410,888, 73,137
-	left.frames.push_back({ 486, (greenColor ? 898 : 1058), 93, 127 }); // 486,898, 93,127
-	left.frames.push_back({ 588, (greenColor ? 898 : 1058), 93, 127 }); // 588,898, 93,127
+	left.frames.push_back({ 334, (greenColor ? 888 : 1042), 73, 137 }); 
+	left.frames.push_back({ 410, (greenColor ? 888 : 1042), 73, 137 }); 
+	left.frames.push_back({ 486, (greenColor ? 898 : 1058), 93, 127 }); 
+	left.frames.push_back({ 588, (greenColor ? 898 : 1058), 93, 127 }); 
 	left.loop = false;
-	left.speed = 0.5f;
+	left.speed = 0.1f;
 
 	// Reverse left
-	reverseLeft.frames.push_back({ 486, (greenColor ? 898 : 1058), 93, 127 }); // 486,898, 93,127
-	reverseLeft.frames.push_back({ 588, (greenColor ? 898 : 1058), 93, 127 }); // 588,898, 93,127
-	reverseLeft.frames.push_back({ 334, (greenColor ? 888 : 1058), 73, 137 });  // 336,888, 73,137
-	reverseLeft.frames.push_back({ 410, (greenColor ? 888 : 1058), 73, 137 }); // 410,888, 73,137
+	reverseLeft.frames.push_back({ 486, (greenColor ? 898 : 1058), 93, 127 }); 
+	reverseLeft.frames.push_back({ 588, (greenColor ? 898 : 1058), 93, 127 }); 
+	reverseLeft.frames.push_back({ 334, (greenColor ? 888 : 1058), 73, 137 });  
+	reverseLeft.frames.push_back({ 410, (greenColor ? 888 : 1058), 73, 137 }); 
 	reverseLeft.loop = false;
-	reverseLeft.speed = 0.5f;
+	reverseLeft.speed = 0.1f;
 
 	// End left
-	endLeft.frames.push_back({ 688, (greenColor ? 914 : 1074), 127, 111 }); // 688,914,127,111 
-	endLeft.frames.push_back({ 818, (greenColor ? 914 : 1074), 127, 111 }); // 818,914,127,111 
+	endLeft.frames.push_back({ 688, (greenColor ? 914 : 1074), 127, 111 }); 
+	endLeft.frames.push_back({ 818, (greenColor ? 914 : 1074), 127, 111 });  
 	endLeft.loop = true;
 	endLeft.speed = 0.5f;
 
@@ -158,16 +159,28 @@ void Enemy::Update(float deltaTime) {
 		enemyPosZ += speed;
 		switch (enemyAnimState) {
 		case E_LEANING_LEFT:
-			if (current_animation->Finished()) enemyAnimState = E_END_LEFT;
+			if (current_animation->Finished()) {
+				current_animation->Reset();
+				enemyAnimState = E_END_LEFT;
+			}
 			break;
 		case E_LEANING_RIGHT:
-			if (current_animation->Finished()) enemyAnimState = E_END_RIGHT;
+			if (current_animation->Finished()) {
+				current_animation->Reset();
+				enemyAnimState = E_END_RIGHT;
+			}
 			break;
 		case E_REVERSE_LEFT:
-			if (current_animation->Finished()) enemyAnimState = E_IDLE;
+			if (current_animation->Finished()) {
+				current_animation->Reset();
+				enemyAnimState = E_IDLE;
+			}
 			break;
 		case E_REVERSE_RIGHT:
-			if (current_animation->Finished()) enemyAnimState = E_IDLE;
+			if (current_animation->Finished()) {
+				current_animation->Reset();
+				enemyAnimState = E_IDLE;
+			}
 			break;
 		}
 		current_animation = animArray[enemyAnimState];
@@ -210,6 +223,7 @@ void Enemy::setMoveAnim(float direction) {
 		if (direction < 0) enemyAnimState = E_LEANING_LEFT;
 		else if (direction > 0) enemyAnimState = E_LEANING_RIGHT;
 	}
+	current_animation = animArray[enemyAnimState];
 }
 
 void  ModuleEnemy::enableMovement(bool enabled){

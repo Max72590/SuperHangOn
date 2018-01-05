@@ -17,8 +17,8 @@ ModuleSceneMusicSelection::~ModuleSceneMusicSelection()
 }
 
 bool ModuleSceneMusicSelection::Start() {
-	background = App->textures->Load("rtype/MusicMenuBackground.png");
-	musicMenu = App->textures->Load("rtype/musicMenu.png");
+	background = App->textures->Load("sprites/MusicMenuBackground.png");
+	musicMenu = App->textures->Load("sprites/musicMenu.png");
 	selectedOptionAnim.frames.push_back({0,335,565,50});
 	selectedOptionAnim.frames.push_back({0,335,5,5}); // Small size to be out of sight
 	selectedOptionAnim.speed = 0.05f;
@@ -33,7 +33,7 @@ bool ModuleSceneMusicSelection::Start() {
 }
 
 update_status ModuleSceneMusicSelection::Update(float deltaTime) {
-	App->renderer->Blit(background, 0, 0, &(SDL_Rect({ 0,0,640,480 })));
+	App->renderer->Blit(background, 0, 0, &(SDL_Rect({ 0,0,SCREEN_WIDTH,SCREEN_HEIGHT })));
 	App->renderer->Blit(musicMenu, 31 , optionsYCoords[optionSelectedIndex], &selectedOptionAnim.GetCurrentFrame());
 	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
 	{

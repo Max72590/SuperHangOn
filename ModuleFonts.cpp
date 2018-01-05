@@ -14,8 +14,8 @@ ModuleFonts::~ModuleFonts()
 }
 
 bool ModuleFonts::Start() {
-	texFont = App->textures->Load("rtype/miscellaneousMark2.png");
-	lettersFont = App->textures->Load("rtype/gameFont.png");
+	texFont = App->textures->Load("sprites/miscellaneousMark2.png");
+	lettersFont = App->textures->Load("sprites/gameFont.png");
 	yellowFont = Font(569, 403 , 170, 17,10,true);
 	whiteFont = Font(569, 421, 170, 17,10, true);
 	redFont = Font(569, 439, 170, 17,10, true);
