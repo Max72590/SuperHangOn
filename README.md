@@ -17,6 +17,10 @@ Contact: max-725@hotmail.com
 
 License: GNU GENERAL PUBLIC LICENSE
 
+## Gameplay video
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/hpb3YSFdMNk" frameborder="0" allowfullscreen></iframe> You can watch it directly on [youtube](https://www.youtube.com/watch?v=hpb3YSFdMNk).
+
 ##Commands
 
 The game is singleplayer only, the game controls are as follows:
@@ -36,6 +40,6 @@ and you will be redirected into the map selection menu.
 
 ## Acknowledgements
 
-* [http://www.extentofthejam.com/pseudo/]
+* [https://www.youtube.com/watch?v=N60lBZDEwJ8&list=PLB_ibvUSN7mzUffhiay5g5GUHyJRO4DYr&index=8]
 * [https://codeincomplete.com/posts/javascript-racer/]
 * Super Hang On (MegaDrive)
