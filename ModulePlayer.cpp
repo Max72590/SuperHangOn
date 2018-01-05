@@ -273,19 +273,24 @@ void ModulePlayer::setPlayerState(state pState) {
 void ModulePlayer::animateToIDLE() {
 	switch (playerState) {
 	case END_LEFT:
+		reverseLeft.Reset();
 		App->player->setPlayerState(REVERSE_LEFT);
 		break;
 	case END_RIGHT:
+		reverseRight.Reset();
 		App->player->setPlayerState(REVERSE_RIGHT);
 		break;
 	case LEANING_LEFT:
+		reverseLeft.Reset();
 		App->player->setPlayerState(REVERSE_LEFT);
 		break;
 	case LEANING_RIGHT:
+		reverseRight.Reset();
 		App->player->setPlayerState(REVERSE_RIGHT);
 		break;
 	}
 	reachedEndLine = true;
+	current_animation = animArray[playerState];
 }
 
 int  ModulePlayer::getScore() const{

@@ -55,7 +55,6 @@ bool ModuleAsiaStage::Start() {
 	stageColors[2].offroadLight = SDL_Color({ 192,160,64,255 });
 	
 	// Biome change indexes
-	stageColorChangeIndexes.push_back(900);
 	stageColorChangeIndexes.push_back(1425);
 	stageColorChangeIndexes.push_back(3090);
 	sky.push_back(new SDL_Rect({ 8,67,512 ,36 }));
@@ -95,6 +94,7 @@ bool ModuleAsiaStage::Start() {
 	raceSeconds = 60;
 	gameOverCountdown = 10;
 	colorIndex = 0;
+	stageIndex = 0;
 	camZPosition = 0;
 	endSegmentIndex = 4500;
 	camDepth = 0.84f; // Horizon looks better with this value rather than this one-> camDepth = 0.58 

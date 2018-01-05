@@ -34,8 +34,9 @@ update_status ModuleRoad::Update(float deltaTime) {
 		setUpEnding(false);
 		runGameOverTimer = true;
 	}
-	if (stageColorChangeIndexes[colorIndex] <  (int)(camZPosition / segmentLength)) {
-		if (colorIndex < (int)stageColorChangeIndexes.size()-1){		
+	if (stageColorChangeIndexes[stageIndex] <  (int)(camZPosition / segmentLength)) {
+
+		if (colorIndex < (int)stageColorChangeIndexes.size()){		
 			bool color1Ok = calculateColorTransition(stageColors[colorIndex].sky, stageColors[colorIndex+1].sky);
 			bool color2Ok = calculateColorTransition(stageColors[colorIndex].roadDark, stageColors[colorIndex + 1].roadDark);
 			bool color3Ok = calculateColorTransition(stageColors[colorIndex].roadLight, stageColors[colorIndex + 1].roadLight);
@@ -44,19 +45,24 @@ update_status ModuleRoad::Update(float deltaTime) {
 			if (color1Ok && color2Ok && color3Ok && color4Ok && color5Ok) {
 				++colorIndex;
 				startColorTransition = false;
+				if (stageIndex < (int)stageColorChangeIndexes.size() - 1) ++stageIndex;
 			}
 		}
 	}
-	if (semaphore.Finished()) {
-		App->enemies->startRace();
-		runTimer = true;
-		App->player->activatePlayer(true);
-	}
-	paintRoad(deltaTime);
-	App->gui->updateGUIValues((runGameOverTimer? gameOverCountdown : raceSeconds), App->player->getScore(), (int)App->player->getSpeed());
+
 	if (runTimer) {
 		updateTimer(deltaTime);
 	}
+	else {
+		if (semaphore.Finished()) {
+			App->enemies->startRace();
+			runTimer = true;
+			App->player->activatePlayer(true);
+		}
+	}
+	paintRoad(deltaTime);
+	App->gui->updateGUIValues((runGameOverTimer? gameOverCountdown : raceSeconds), App->player->getScore(), (int)App->player->getSpeed());
+
 	return UPDATE_CONTINUE;
 }
 
@@ -82,6 +88,7 @@ bool ModuleRoad::CleanUp() {
 	sky.clear();
 	foreground.clear();
 	resetRoad();
+	stageColorChangeIndexes.clear();
 	App->player->Disable();
 	App->enemies->Disable();
 	App->collision->Disable();

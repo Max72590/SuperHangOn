@@ -86,7 +86,8 @@ public:
 	float roadY = 0;
 	int roadLength =0;
 	int endSegmentIndex;
-	int colorIndex = 0;
+	int colorIndex;
+	int stageIndex;
 	bool crossedEndSegment = false;
 	//Camera projection vars
 	int camHeight = 1500;
