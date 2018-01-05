@@ -77,7 +77,7 @@ public:
 	// Background
 	float backgroundPosX = 0;
 	float foregroundPosX = 0;
-	float landscapeY = 0;
+	int landscapeY = 0;
 	//Road
 	float roadWidth = 2000;
 	int segmentLength = 200;

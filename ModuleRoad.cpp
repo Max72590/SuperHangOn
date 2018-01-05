@@ -131,7 +131,7 @@ void ModuleRoad::paintRoad(float deltaTime) {
 		roadPoint *rpPrevious = roadPoints[(i - 1)%roadLength];
 		drawTrack( (rpPrevious), (rpActual), ((i/3)%2 == 0 ));		
 	}
-	landscapeY = ymax;
+	landscapeY = (int)ymax;
 	drawSprites(initPos);
 	roadPoint* nextpoint = roadPoints[(initPos + 1) % roadLength];
 	checkCollisions(nextpoint);

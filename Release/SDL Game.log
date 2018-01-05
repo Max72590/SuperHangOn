@@ -1,0 +1,23 @@
+﻿  Application.cpp
+  Log.cpp
+  Main.cpp
+  ModuleAsiaStage.cpp
+  ModuleAudio.cpp
+  ModuleCollision.cpp
+  ModuleEnemy.cpp
+  ModuleFadeToBlack.cpp
+  ModuleFonts.cpp
+  ModuleGUI.cpp
+  ModuleInput.cpp
+  ModulePlayer.cpp
+  ModuleRender.cpp
+  ModuleRoad.cpp
+ModuleRoad.cpp(28): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
+ModuleRoad.cpp(29): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
+  ModuleSceneIntro.cpp
+  ModuleSceneMapSelection.cpp
+  ModuleSceneMusicSelection.cpp
+  ModuleTextures.cpp
+  ModuleWindow.cpp
+ModuleRoad.obj : error LNK2001: símbolo externo _filledPolygonRGBA sin resolver
+C:\Users\Usuario\Documents\Visual Studio 2017\Projects\SuperHangOn\Release\SDL Game - Master 3 Handout.exe : fatal error LNK1120: 1 externos sin resolver
