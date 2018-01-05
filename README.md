@@ -7,7 +7,7 @@ featuring a tribute of Super Hang On, released 1987 for arcade and consoles.
 
 Full project at github: https://github.com/Max72590/SuperHangOn
 
-Project webpage: 
+Project webpage: https://max72590.github.io/
 
 Latest release (1.0): https://github.com/Max72590/SuperHangOn/releases/tag/1.0
 
@@ -21,12 +21,12 @@ License: GNU GENERAL PUBLIC LICENSE
 
 The game is singleplayer only, the game controls are as follows:
 
-ACCELERATE: W
-LEFT: A
-RIGHT: D
-BRAKES: S
-SELECT OPTION: SPACE (Only in menus)
-F1: Draw ALL the colliders in the game.
+* **ACCELERATE: W**
+* **LEFT: A**
+* **RIGHT: D**
+* **BRAKES: S**
+* **SELECT OPTION: SPACE (Only in menus)**
+* **F1: Draw ALL the colliders in the game.**
 
 ## How to finish the game:
 
