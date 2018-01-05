@@ -21,15 +21,26 @@ License: GNU GENERAL PUBLIC LICENSE
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/hpb3YSFdMNk" frameborder="0" allowfullscreen></iframe> You can watch it directly on [youtube](https://www.youtube.com/watch?v=hpb3YSFdMNk).
 
-##Commands
+## Commands
 
 The game is singleplayer only, the game controls are as follows:
 
+In menus:
+
+* **CHANGE OPTIONS: W, S**
+
+* **SELECT OPTION: SPACE**
+
+In game:
+
 * **ACCELERATE: W**
+
 * **LEFT: A**
+
 * **RIGHT: D**
+
 * **BRAKES: S**
-* **SELECT OPTION: SPACE (Only in menus)**
+
 * **F1: Draw ALL the colliders in the game.**
 
 ## How to finish the game:
@@ -40,6 +51,8 @@ and you will be redirected into the map selection menu.
 
 ## Acknowledgements
 
-* [https://www.youtube.com/watch?v=N60lBZDEwJ8&list=PLB_ibvUSN7mzUffhiay5g5GUHyJRO4DYr&index=8]
+* [http://www.extentofthejam.com/pseudo/]
+
 * [https://codeincomplete.com/posts/javascript-racer/]
+
 * Super Hang On (MegaDrive)
