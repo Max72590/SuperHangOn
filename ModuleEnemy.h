@@ -68,4 +68,4 @@ private:
 	float secondAcum;
 };
 
-#endif 
+#endif // __MODULEENEMY_H__

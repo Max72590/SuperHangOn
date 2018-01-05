@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __MODULEGUI_H__
+#define __MODULEGUI_H__
+
 #include "Module.h"
 #include "ModuleTextures.h"
 #include "ModuleFonts.h"
@@ -44,3 +46,4 @@ public:
 	guiMode actualMode;
 };
 
+#endif // __MODULEGUI_H__

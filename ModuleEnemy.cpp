@@ -31,7 +31,7 @@ update_status ModuleEnemy::Update(float deltaTime) {
 		for (int i = 0; i < (int)enemies.size(); ++i) {
 			if (turboSeconds <= 0) enemies[i]->setSpeed(enemies[i]->normalSpeed);
 			if (enemies[i]->enemyPosZ > 500 && !enemies[i]->teleportedForward) {
-				enemies[i]->enemyPosZ += 300 * i;
+				enemies[i]->enemyPosZ += 150 * i;
 				enemies[i]->teleportedForward = true;
 			}
 			enemies[i]->Update(deltaTime);
@@ -58,6 +58,10 @@ void ModuleEnemy::startRace() {
 
 void ModuleEnemy::drawEnemy(float x, float y, float scaleW, float scaleH, Enemy *e) {
 	assert(e != nullptr);
+	if (e == nullptr) {
+		LOG("Parameter enemy is null");
+		return;
+	}
 	int middleX = (int)e->enemyPosX - ((int)e->current_animation->GetCurrentFrame().w / 2);
 	int middleY = 480 - ((int)e->current_animation->GetCurrentFrame().h * 2);
 	App->renderer->ScaledBlit(sprites, (int)x, (int)y, &(e->current_animation->GetCurrentFrame()), (int)scaleW, (int)scaleH);
@@ -71,6 +75,10 @@ void ModuleEnemy::addEnemy(Enemy &e, float x, float y) {
 
 void ModuleEnemy::updateEnemyCollider(Enemy *e, int posx, int posy, int width, int height) {
 	assert(e != nullptr);
+	if (e == nullptr) {
+		LOG("Parameter enemy is null");
+		return;
+	}
 	e->collider->setPos(posx,posy);
 	e->collider->setWidthHeight(width,height);
 }

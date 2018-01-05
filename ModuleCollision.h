@@ -1,5 +1,5 @@
-#ifndef __ModuleCollision_H__
-#define __ModuleCollision_H__
+#ifndef __MODULECOLLISION_H__
+#define __MODULECOLLISION_H__
 
 #include<list>
 #include "Module.h"
@@ -45,4 +45,4 @@ private:
 	bool debug = false;
 };
 
-#endif // __ModuleCollision_H__
+#endif // __MODULECOLLISION_H__

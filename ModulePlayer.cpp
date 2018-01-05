@@ -76,7 +76,7 @@ ModulePlayer::ModulePlayer(bool active) : Module(active)
 	falling.frames.push_back({ 1136, 175, 131, 31 }); // 26
 	falling.frames.push_back({ 36, 294, 135, 33 }); // 29
 	falling.loop = false;
-	falling.speed = 0.1f;
+	falling.speed = 0.033f;
 
 
 }
@@ -158,11 +158,9 @@ update_status ModulePlayer::Update(float deltaTime)
 			}
 			break;
 		case FALLING:
-			if (speed > 0) {
-				speed += fallDecel*deltaTime;
-
-			}
-			if (speed <= 0) {
+			if (speed > 0) speed += fallDecel*deltaTime;
+			if (falling.Finished()) {
+				speed = 0;
 				falling.Reset();
 				playerX = 0;
 				playerState = IDLE;

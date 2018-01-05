@@ -10,10 +10,7 @@
 
 #define WHITE SDL_Color({255,255,255,255})
 #define RED SDL_Color({255,0,0,255})
-#define ROAD_DARK SDL_Color({62,62,62,255})
-#define ROAD_LIGHT SDL_Color({100,100,100,255})
-#define GREEN_DARK SDL_Color({0,150,0,255})
-#define GREEN_LIGHT SDL_Color({0,200,0,255})
+
 
 struct roadProp {
 	float spriteXCoord,scalefactor;
@@ -59,6 +56,7 @@ public:
 	void drawTrack(roadPoint const *p1, roadPoint const *p2, bool const isColor1) const;
 	void drawSprites(int initPos);
 	void smoothInOut(int previousPos, int startPos, float amount);
+	void updateTimer(float deltaTime);
 	float calculatePosZ(float speed);
 	void checkCollisions(roadPoint *rp);
 	void setUpEnding(bool gameOver);
@@ -66,8 +64,8 @@ public:
 
 public:
 	Animation semaphore;
-	vector<SDL_Rect*> sky;
-	vector<SDL_Rect*> foreground;
+	std::vector<SDL_Rect*> sky;
+	std::vector<SDL_Rect*> foreground;
 	SDL_Texture* background = nullptr;
 	SDL_Texture* roadDecorations = nullptr;
 	SDL_Texture* roadSigns = nullptr;

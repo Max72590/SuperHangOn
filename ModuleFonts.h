@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __MODULEFONTS_H__
+#define __MODULEFONTS_H__
+
 
 #include "Module.h"
 #include <string>
@@ -44,4 +46,6 @@ public:
 	Font timeFont;
 	Font letters;
 };
+
+#endif // __MODULEFONTS_H__
 

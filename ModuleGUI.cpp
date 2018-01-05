@@ -46,18 +46,30 @@ update_status ModuleGUI::Update(float deltaTime) {
 				App->fonts->drawMessage(TIME_FONT, to_string(elapsed_time), 270, 50);
 				break;
 			case SCORES_MODE:
-				App->fonts->drawMessage(WHITE_LETTERS, "course", 150, 100);
-				App->fonts->drawMessage(WHITE_LETTERS, "clear", 250, 100);
-				App->fonts->drawMessage(WHITE_LETTERS, "final", 150, 150);
-				App->fonts->drawMessage(WHITE_LETTERS, "score", 250, 150);
-				App->fonts->drawMessage(TIME_FONT, to_string(playerScore), 200, 200);
+				App->fonts->drawMessage(WHITE_LETTERS, "course",225, 100);
+				App->fonts->drawMessage(WHITE_LETTERS, "clear", 325, 100);
+				App->fonts->drawMessage(WHITE_LETTERS, "final", 225, 150);
+				App->fonts->drawMessage(WHITE_LETTERS, "score", 325, 150);
+				App->fonts->drawMessage(TIME_FONT, to_string(playerScore), 225, 200);
+				App->fonts->drawMessage(WHITE_LETTERS, "back", 170, 250);
+				App->fonts->drawMessage(WHITE_LETTERS, "to", 250, 250);
+				App->fonts->drawMessage(WHITE_LETTERS, "map", 290, 250);
+				App->fonts->drawMessage(WHITE_LETTERS, "selec", 345, 250);
+				App->fonts->drawMessage(WHITE_LETTERS, "in", 425, 250);
+				App->fonts->drawMessage(TIME_FONT, to_string(elapsed_time), 290, 300);
 				break;
 			case GAME_OVER_MODE:
-				App->fonts->drawMessage(WHITE_LETTERS, "game", 150, 100);
-				App->fonts->drawMessage(WHITE_LETTERS, "over", 250, 100);
-				App->fonts->drawMessage(WHITE_LETTERS, "final", 150, 150);
-				App->fonts->drawMessage(WHITE_LETTERS, "score", 250, 150);
-				App->fonts->drawMessage(TIME_FONT, to_string(playerScore), 200, 200);
+				App->fonts->drawMessage(WHITE_LETTERS, "game",  225, 100);
+				App->fonts->drawMessage(WHITE_LETTERS, "over", 325, 100);
+				App->fonts->drawMessage(WHITE_LETTERS, "final", 225, 150);
+				App->fonts->drawMessage(WHITE_LETTERS, "score", 325, 150);
+				App->fonts->drawMessage(TIME_FONT, to_string(playerScore), 225, 200);
+				App->fonts->drawMessage(WHITE_LETTERS, "back", 170, 250);
+				App->fonts->drawMessage(WHITE_LETTERS, "to", 250, 250);
+				App->fonts->drawMessage(WHITE_LETTERS, "map", 290, 250);
+				App->fonts->drawMessage(WHITE_LETTERS, "selec", 345, 250);
+				App->fonts->drawMessage(WHITE_LETTERS, "in", 425, 250);
+				App->fonts->drawMessage(TIME_FONT, to_string(elapsed_time), 290, 300);
 				break;
 	}
 	return UPDATE_CONTINUE;

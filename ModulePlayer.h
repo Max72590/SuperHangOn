@@ -1,5 +1,5 @@
-#ifndef __ModulePlayer_H__
-#define __ModulePlayer_H__
+#ifndef __MODULEPLAYER_H__
+#define __MODULEPLAYER_H__
 
 #include "Module.h"
 #include "ModuleCollision.h"
@@ -64,11 +64,11 @@ private:
 	float accel = maxspeed / 5.0f;
 	float braking = -maxspeed;
 	float decel = -maxspeed / 5.0f;
-	float fallDecel = -maxspeed / 2.0f;
-	float offRoadDecel = -maxspeed / 20.0f;
-	float offRoadLimit = maxspeed / 4.0f;
+	float fallDecel = -maxspeed / 10.0f;
+	float offRoadDecel = -maxspeed / 10.0f;
+	float offRoadLimit = maxspeed / 3.0f;
 	float maxPlayerX = 4000;
 	int score;
 };
 
-#endif
+#endif // __MODULEPLAYER_H__

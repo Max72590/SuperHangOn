@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __MODULESCENEMUSICSELECTION_H__
+#define __MODULESCENEMUSICSELECTION_H__
+
 #include "Module.h"
 #include "Animation.h"
 #include <string>
@@ -27,3 +29,4 @@ public:
 	bool CleanUp();
 };
 
+#endif // __MODULESCENEMUSICSELECTION_H__

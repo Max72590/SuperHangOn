@@ -8,15 +8,12 @@
 #include "ModuleFadeToBlack.h"
 #include "ModuleAudio.h"
 
-using namespace std;
 
-ModuleRoad::ModuleRoad(bool active): Module(active)
-{
+ModuleRoad::ModuleRoad(bool active): Module(active){
 }
 
 
-ModuleRoad::~ModuleRoad()
-{
+ModuleRoad::~ModuleRoad(){
 }
 
 
@@ -28,22 +25,26 @@ bool ModuleRoad::Start() {
 update_status ModuleRoad::Update(float deltaTime) {
 	SDL_Color c = stageColors[colorIndex].sky;
 	App->renderer->DrawQuad(SDL_Rect({0,0,640,480}), c.r,c.g,c.b,c.a);
-	App->renderer->ScaledBlit(background, (int)backgroundPosX, 204, sky[colorIndex], sky[colorIndex]->w * 2, sky[colorIndex]->h * 2);
-	App->renderer->ScaledBlit(background, (int)foregroundPosX, 252, foreground[colorIndex], foreground[colorIndex]->w * 2, foreground[colorIndex]->h * 2);
+	App->renderer->ScaledBlit(background, (int)backgroundPosX, landscapeY- sky[colorIndex]->h*2, sky[colorIndex], sky[colorIndex]->w * 2, sky[colorIndex]->h * 2);
+	App->renderer->ScaledBlit(background, (int)foregroundPosX, landscapeY- foreground[colorIndex]->h*2, foreground[colorIndex], foreground[colorIndex]->w * 2, foreground[colorIndex]->h * 2);
 	camZPosition = calculatePosZ(App->player->getSpeed()*deltaTime*40);
 	bool actualSeg = (((int)(camZPosition / segmentLength)) >= endSegmentIndex);
-	if (stageColorChangeIndexes[colorIndex] <  (int)(camZPosition / segmentLength)) {
-		if (colorIndex < (int)stageColorChangeIndexes.size()-1) startColorTransition = true;		
+	if (actualSeg && !crossedEndSegment) {
+		crossedEndSegment = true;
+		setUpEnding(false);
+		runGameOverTimer = true;
 	}
-	if (startColorTransition) {
-		bool color1Ok = calculateColorTransition(stageColors[colorIndex].sky, stageColors[colorIndex+1].sky);
-		bool color2Ok = calculateColorTransition(stageColors[colorIndex].roadDark, stageColors[colorIndex + 1].roadDark);
-		bool color3Ok = calculateColorTransition(stageColors[colorIndex].roadLight, stageColors[colorIndex + 1].roadLight);
-		bool color4Ok = calculateColorTransition(stageColors[colorIndex].offroadDark, stageColors[colorIndex + 1].offroadDark);
-		bool color5Ok = calculateColorTransition(stageColors[colorIndex].offroadLight, stageColors[colorIndex + 1].offroadLight);
-		if (color1Ok && color2Ok && color3Ok && color4Ok && color5Ok) {
-			++colorIndex;
-			startColorTransition = false;
+	if (stageColorChangeIndexes[colorIndex] <  (int)(camZPosition / segmentLength)) {
+		if (colorIndex < (int)stageColorChangeIndexes.size()-1){		
+			bool color1Ok = calculateColorTransition(stageColors[colorIndex].sky, stageColors[colorIndex+1].sky);
+			bool color2Ok = calculateColorTransition(stageColors[colorIndex].roadDark, stageColors[colorIndex + 1].roadDark);
+			bool color3Ok = calculateColorTransition(stageColors[colorIndex].roadLight, stageColors[colorIndex + 1].roadLight);
+			bool color4Ok = calculateColorTransition(stageColors[colorIndex].offroadDark, stageColors[colorIndex + 1].offroadDark);
+			bool color5Ok = calculateColorTransition(stageColors[colorIndex].offroadLight, stageColors[colorIndex + 1].offroadLight);
+			if (color1Ok && color2Ok && color3Ok && color4Ok && color5Ok) {
+				++colorIndex;
+				startColorTransition = false;
+			}
 		}
 	}
 	if (semaphore.Finished()) {
@@ -51,31 +52,10 @@ update_status ModuleRoad::Update(float deltaTime) {
 		runTimer = true;
 		App->player->activatePlayer(true);
 	}
-	if ( actualSeg && !crossedEndSegment ){
-		crossedEndSegment = true;
-		setUpEnding(false);
-		runGameOverTimer = true;
-	}
 	paintRoad(deltaTime);
-	App->gui->updateGUIValues(raceSeconds, App->player->getScore(), (int)App->player->getSpeed());
+	App->gui->updateGUIValues((runGameOverTimer? gameOverCountdown : raceSeconds), App->player->getScore(), (int)App->player->getSpeed());
 	if (runTimer) {
-		timerAcum += deltaTime;
-		if (timerAcum > 1.0f) {
-			timerAcum = 0.0f;
-			if (raceSeconds > 0) --raceSeconds;
-			else if (raceSeconds <= 0 && !crossedEndSegment) {
-				setUpEnding(true);
-				runGameOverTimer = true;
-			}
-			if (runGameOverTimer) {				
-				if (gameOverCountdown > 0) --gameOverCountdown;
-				else {
-					App->audio->StopMusic();
-					App->fade->FadeToBlack((Module*)App->scene_intro, this);
-				}
-			}
-		}
-
+		updateTimer(deltaTime);
 	}
 	return UPDATE_CONTINUE;
 }
@@ -138,7 +118,7 @@ void ModuleRoad::paintRoad(float deltaTime) {
 	camHeight = (int)(1500 + rp->worldY);
 	offsetX = 0;
 	roadX = 0;
-	App->player->offsetX(-(rp->curvefactor)*deltaTime);
+	App->player->offsetX(-(rp->curvefactor*1.5f)*deltaTime);
 	for (int i = initPos; i < initPos + drawDistance; ++i) {
 		roadPoint *rpActual = roadPoints[i%roadLength];
 		projection(*rpActual, (i>= roadLength) );
@@ -151,6 +131,7 @@ void ModuleRoad::paintRoad(float deltaTime) {
 		roadPoint *rpPrevious = roadPoints[(i - 1)%roadLength];
 		drawTrack( (rpPrevious), (rpActual), ((i/3)%2 == 0 ));		
 	}
+	landscapeY = ymax;
 	drawSprites(initPos);
 	roadPoint* nextpoint = roadPoints[(initPos + 1) % roadLength];
 	checkCollisions(nextpoint);
@@ -169,6 +150,11 @@ void ModuleRoad::projection(roadPoint &rp, bool looped) {
 void ModuleRoad::drawTrack(roadPoint const *p1, roadPoint const *p2, bool const isColor1) const {
 	assert(p1 != nullptr);
 	assert(p2 != nullptr);
+	if (p1 == nullptr || p2 == nullptr) {
+		if (p1 == nullptr) LOG("Point 1 is null");
+		if (p2 == nullptr) LOG("Point 2 is null");
+		return;
+	}
 	Sint16 p1x = (Sint16)(p1->screenX);
 	Sint16 p1w = (Sint16)p1->screenW;
 	Sint16 p2x = (Sint16)p2->screenX;
@@ -201,6 +187,10 @@ void ModuleRoad::drawTrack(roadPoint const *p1, roadPoint const *p2, bool const 
 
 void ModuleRoad::drawSprites(int initPos) {
 	assert(initPos >= 0);
+	if (initPos < 0) {
+		LOG("The value of the index of the point is below 0");
+		return;
+	}
 	// Scenery
 	for (int j = initPos + (int)drawDistance; j > initPos; --j) {
 		roadPoint *roadP = roadPoints[j % roadLength];
@@ -210,15 +200,15 @@ void ModuleRoad::drawSprites(int initPos) {
 			else if (roadP->prop->spriteID == -2) sprite = semaphore.GetCurrentFrame();
 			float spriteX = roadP->screenX + roadP->screenScale * roadP->prop->spriteXCoord * (SCREEN_WIDTH / 2);
 			float spriteY = roadP->screenY;
-			float spriteW = sprite.w * (roadP->screenW / segmentLength);
-			float spriteH = sprite.h * (roadP->screenW / segmentLength);
+			float spriteW = sprite.w * (roadP->screenW / segmentLength)*roadP->prop->scalefactor;
+			float spriteH = sprite.h * (roadP->screenW / segmentLength)*roadP->prop->scalefactor;
 			spriteX += spriteW * roadP->prop->spriteXCoord;
-			spriteY += spriteH *roadP->prop->scalefactor * (-1);
+			spriteY += spriteH * (-1);
 			float clipH = spriteY + spriteH - roadP->clipCoord;
 			if (clipH < 0) clipH = 0;
 			if (clipH >= spriteH) continue;
-			sprite.h = (int)(sprite.h - (sprite.h * clipH / spriteH));
-			App->renderer->ScaledBlit(roadP->prop->tex, (int)(spriteX - spriteW / 2), (int)spriteY, &sprite, (int)(spriteW*roadP->prop->scalefactor), (int)(spriteH*roadP->prop->scalefactor));
+			sprite.h = (int)ceil(sprite.h - ((sprite.h * (clipH*2.0f)) / spriteH));
+			App->renderer->ScaledBlit(roadP->prop->tex, (int)(spriteX - spriteW / 2), (int)spriteY, &sprite, (int)spriteW, (int)spriteH);
 			if (roadP->prop->collider != nullptr) {
 				roadP->prop->collider->setPos((int)(spriteX - spriteW / 2), (int)spriteY);
 				roadP->prop->collider->setWidthHeight((int)spriteW, (int)spriteH);
@@ -258,6 +248,25 @@ void ModuleRoad::smoothInOut(int previouspPos, int actualPos, float amount) {
 	}
 }
 
+void ModuleRoad::updateTimer(float deltaTime) {
+	timerAcum += deltaTime;
+	if (timerAcum > 1.0f) {
+		timerAcum = 0.0f;
+		if (raceSeconds > 0) --raceSeconds;
+		else if (raceSeconds <= 0 && !crossedEndSegment) {
+			setUpEnding(true);
+			runGameOverTimer = true;
+		}
+		if (runGameOverTimer) {
+			if (gameOverCountdown > 0) --gameOverCountdown;
+			else {
+				App->audio->StopMusic();
+				App->fade->FadeToBlack((Module*)App->map_selec, this);
+			}
+		}
+	}
+}
+
 float ModuleRoad::calculatePosZ(float speed) {
 	realPosZ += (int)speed;
 	if (realPosZ > 200) {
@@ -271,19 +280,19 @@ float ModuleRoad::calculatePosZ(float speed) {
 
 void ModuleRoad::checkCollisions(roadPoint *rp) {
 	assert(rp != nullptr);
+	if (rp == nullptr) {
+		LOG("The roadpoint is null");
+		return;
+	}
 	if (rp->prop->spriteID > -1 && rp->prop->collider != nullptr) {
-		if (App->player->collider->checkCollisionCoordX(rp->prop->collider->rect)) {
-			App->player->setPlayerState(FALLING);
-		}
+		if (App->player->collider->checkCollisionCoordX(rp->prop->collider->rect)) 	App->player->setPlayerState(FALLING);
 	}
 	for (int k = 0; k < (int)App->enemies->enemies.size(); ++k) {
 		Enemy *e = App->enemies->enemies[k];
 		if (e->getPosZ()-6 <= (rp->worldZ/ segmentLength) && e->getPosZ() > (rp->worldZ / segmentLength) && e->enemyEnabled()) {
 			roadPoint *roadP = roadPoints[((int)e->getPosZ()) % roadLength];
 			if (App->player->collider->checkCollisionCoordX(e->collider->rect)) {
-				if (App->player->getSpeed() > App->player->getMinSpeed()) {
-					App->player->setSpeed(0);
-				}
+				if (App->player->getSpeed() > App->player->getMinSpeed()) 	App->player->setSpeed(0);
 			}
 		}
 	}
@@ -293,9 +302,7 @@ void ModuleRoad::setUpEnding(bool gameOVer) {
 	App->player->animateToIDLE();
 	for (int i = 0; i < (int)App->enemies->enemies.size(); ++i) {
 		Enemy *e = App->enemies->enemies[i];
-		if ((e->getPosZ() < (int)(camZPosition / segmentLength)) && (e->getPosZ() > (int)(camZPosition / segmentLength) + drawDistance)) {
-			e->setEnabled(false);
-		}
+		e->setEnabled(false);
 	}
 	if (!gameOVer)	App->gui->switchGUImodeToScore(SCORES_MODE);
 	else App->gui->switchGUImodeToScore(GAME_OVER_MODE);
