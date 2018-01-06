@@ -63,3 +63,4 @@ Debug/SDL Game - Master 3 Handout.exe
 *.dll
 /Release/SDL Game - Master 3 Handout.exe
 /Release/SDL Game - Master 3 Handout.Build.CppClean.log
+/Release/SDL Game.log

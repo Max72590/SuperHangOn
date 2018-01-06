@@ -58,7 +58,6 @@ void ModuleEnemy::startRace() {
 }
 
 void ModuleEnemy::drawEnemy(float x, float y, float scaleW, float scaleH, Enemy *e) {
-	assert(e != nullptr);
 	if (e == nullptr) {
 		LOG("Parameter enemy is null");
 		return;
@@ -75,7 +74,6 @@ void ModuleEnemy::addEnemy(Enemy &e, float x, float y) {
 }
 
 void ModuleEnemy::updateEnemyCollider(Enemy *e, int posx, int posy, int width, int height) {
-	assert(e != nullptr);
 	if (e == nullptr) {
 		LOG("Parameter enemy is null");
 		return;

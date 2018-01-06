@@ -156,8 +156,6 @@ void ModuleRoad::projection(roadPoint &rp, bool looped) {
 }
 
 void ModuleRoad::drawTrack(roadPoint const *p1, roadPoint const *p2, bool const isColor1) const {
-	assert(p1 != nullptr);
-	assert(p2 != nullptr);
 	if (p1 == nullptr || p2 == nullptr) {
 		if (p1 == nullptr) LOG("Point 1 is null");
 		if (p2 == nullptr) LOG("Point 2 is null");
@@ -194,7 +192,6 @@ void ModuleRoad::drawTrack(roadPoint const *p1, roadPoint const *p2, bool const 
 }
 
 void ModuleRoad::drawSprites(int initPos) {
-	assert(initPos >= 0);
 	if (initPos < 0) {
 		LOG("The value of the index of the point is below 0");
 		return;
@@ -287,7 +284,7 @@ float ModuleRoad::calculatePosZ(float speed) {
 }
 
 void ModuleRoad::checkCollisions(roadPoint *rp) {
-	assert(rp != nullptr);
+
 	if (rp == nullptr) {
 		LOG("The roadpoint is null");
 		return;
