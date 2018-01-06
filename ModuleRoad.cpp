@@ -89,6 +89,7 @@ bool ModuleRoad::CleanUp() {
 	foreground.clear();
 	resetRoad();
 	stageColorChangeIndexes.clear();
+	stageColors.clear();
 	App->player->Disable();
 	App->enemies->Disable();
 	App->collision->Disable();
