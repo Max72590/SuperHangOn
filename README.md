@@ -5,6 +5,10 @@ featuring a tribute of Super Hang On, released 1987 for arcade and consoles.
 
 ## Project information
 
+This is project is a game tribtue to the classic arcade and console game
+"Super Hang On". All assets and sounds used have been ripped manually and
+from public sources. 
+
 Full project at github: https://github.com/Max72590/SuperHangOn
 
 Project webpage: https://max72590.github.io/
